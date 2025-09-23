@@ -111,6 +111,30 @@ public class Console {
         }
     }
 
+    // Prepare the indirect connections based on Arrival City and Departure City
+    public ArrayList<Connection> PrepareIndirectConnections(ArrayList<Connection> catalog) {
+        ArrayList<Connection> newcatalog = new ArrayList<Connection>();
+        for (Connection conn1 : catalog) {
+            for (Connection conn2 : catalog) {
+                for (Connection conn3 : catalog) {
+                    if (conn2.arrivalCity.equals(conn3.departureCity)
+                            && !conn2.departureCity.equals(conn3.arrivalCity)) {
+                        conn2.connections.add(conn3);
+                    }
+                }
+                if (conn1.arrivalCity.equals(conn2.departureCity)
+                        && !conn1.departureCity.equals(conn2.arrivalCity)) {
+                    conn1.connections.add(conn2);
+                }
+            }
+            newcatalog.add(conn1);
+        }
+        return newcatalog;
+    }
+
+    // Below are the methods to filter through the parameters for One Direct
+    // Connection .
+
     public ArrayList<Connection> ReturnAllConnectionsForDepartureCity(ArrayList<Connection> catalog,
             String departureCityUser) {
         ArrayList<Connection> newcatalog = catalog.stream().filter(c -> c.departureCity.equals(departureCityUser))
@@ -128,6 +152,22 @@ public class Console {
     public ArrayList<Connection> ReturnAllConnectionsForTrainType(ArrayList<Connection> catalog,
             String trainTypeUser) {
         ArrayList<Connection> newcatalog = catalog.stream().filter(c -> c.trainType.equals(trainTypeUser))
+                .collect(Collectors.toCollection(ArrayList::new));
+        return newcatalog;
+    }
+
+    public ArrayList<Connection> ReturnAllConnectionsForFirstClassTicket(ArrayList<Connection> catalog,
+            double lowerPrice, double upperPrice) {
+        ArrayList<Connection> newcatalog = catalog.stream()
+                .filter(c -> c.firstClassTicketRate >= lowerPrice || c.firstClassTicketRate <= upperPrice)
+                .collect(Collectors.toCollection(ArrayList::new));
+        return newcatalog;
+    }
+
+    public ArrayList<Connection> ReturnAllConnectionsForSecondClassTicket(ArrayList<Connection> catalog,
+            double lowerPrice, double upperPrice) {
+        ArrayList<Connection> newcatalog = catalog.stream()
+                .filter(c -> c.secondClassTicketRate >= lowerPrice || c.secondClassTicketRate <= upperPrice)
                 .collect(Collectors.toCollection(ArrayList::new));
         return newcatalog;
     }

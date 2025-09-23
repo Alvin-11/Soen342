@@ -1,6 +1,6 @@
 package com.mycompany.app;
 
-import java.util.ArrayList;
+import java.util.*;
 
 public class ConnectionCatalog {
     private ArrayList<Connection> connections;
@@ -19,5 +19,13 @@ public class ConnectionCatalog {
 
     public int size() {
         return this.connections.size();
+    }
+
+    public ArrayList<Connection> getAllConnections() {
+        return this.connections;
+    }
+
+    public void setAllConnections(ArrayList<Connection> connection) {
+        this.connections = connection;
     }
 }
