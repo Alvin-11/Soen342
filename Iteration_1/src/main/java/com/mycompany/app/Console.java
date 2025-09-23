@@ -159,7 +159,7 @@ public class Console {
     public ArrayList<Connection> ReturnAllConnectionsForFirstClassTicket(ArrayList<Connection> catalog,
             double lowerPrice, double upperPrice) {
         ArrayList<Connection> newcatalog = catalog.stream()
-                .filter(c -> c.firstClassTicketRate >= lowerPrice || c.firstClassTicketRate <= upperPrice)
+                .filter(c -> c.firstClassTicketRate >= lowerPrice | c.firstClassTicketRate <= upperPrice)
                 .collect(Collectors.toCollection(ArrayList::new));
         return newcatalog;
     }
@@ -167,7 +167,7 @@ public class Console {
     public ArrayList<Connection> ReturnAllConnectionsForSecondClassTicket(ArrayList<Connection> catalog,
             double lowerPrice, double upperPrice) {
         ArrayList<Connection> newcatalog = catalog.stream()
-                .filter(c -> c.secondClassTicketRate >= lowerPrice || c.secondClassTicketRate <= upperPrice)
+                .filter(c -> c.secondClassTicketRate >= lowerPrice | c.secondClassTicketRate <= upperPrice)
                 .collect(Collectors.toCollection(ArrayList::new));
         return newcatalog;
     }
