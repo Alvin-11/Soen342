@@ -36,7 +36,7 @@ public class Console {
                 double firstClassTicketRate = Double.parseDouble(row[7]);
                 double secondClassTicketRate = Double.parseDouble(row[8]);
                 String[] DaysInAWeek = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-                String[] DaysInaWeekSmall = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+                String[] DaysInaWeekShortened = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
                 ArrayList<String> daysofOperation1 = new ArrayList<String>();
 
                 // Specify the days of the week the train operates
@@ -48,87 +48,36 @@ public class Console {
                     String[] days = daysOfOperation.split(",");
                     for (String data : days) {
                         if (data.length() < 6) {
-                            switch (data) {
-                                case "Mon":
-                                    daysofOperation1.add("Monday");
-                                    break;
-                                case "Tue":
-                                    daysofOperation1.add("Tuesday");
-                                    break;
-                                case "Wed":
-                                    daysofOperation1.add("Wednesday");
-                                    break;
-                                case "Thu":
-                                    daysofOperation1.add("Thursday");
-                                    break;
-                                case "Fri":
-                                    daysofOperation1.add("Friday");
-                                    break;
-                                case "Sat":
-                                    daysofOperation1.add("Saturday");
-                                    break;
-                                case "Sun":
-                                    daysofOperation1.add("Sunday");
-                                    break;
-
+                            for (int i = 0; i < 7; i++) {
+                                if (data.equals(DaysInaWeekShortened[i])) {
+                                    daysofOperation1.add(DaysInAWeek[i]);
+                                }
                             }
                         } else if (data.length() == 7) {
                             String[] dayStrings = data.split("-");
                             int startIndex = 0;
                             int endIndex = 0;
-                            switch (dayStrings[0]) {
-                                case "Mon":
-                                    startIndex = 0;
-                                    break;
-                                case "Tue":
-                                    startIndex = 1;
-                                    break;
-                                case "Wed":
-                                    startIndex = 2;
-                                    break;
-                                case "Thu":
-                                    startIndex = 3;
-                                    break;
-                                case "Fri":
-                                    startIndex = 4;
-                                    break;
-                                case "Sat":
-                                    startIndex = 5;
-                                    break;
-                                case "Sun":
-                                    startIndex = 6;
-                                    break;
-
+                            for (int i = 0; i < 7; i++) {
+                                if (dayStrings[0].equals(DaysInaWeekShortened[i])) {
+                                    startIndex = i;
+                                }
+                                if (dayStrings[1].equals(DaysInaWeekShortened[i])) {
+                                    endIndex = i;
+                                }
                             }
-                            switch (dayStrings[1]) {
-                                case "Mon":
-                                    endIndex = 0;
-                                    break;
-                                case "Tue":
-                                    endIndex = 1;
-                                    break;
-                                case "Wed":
-                                    endIndex = 2;
-                                    break;
-                                case "Thu":
-                                    endIndex = 3;
-                                    break;
-                                case "Fri":
-                                    endIndex = 4;
-                                    break;
-                                case "Sat":
-                                    endIndex = 5;
-                                    break;
-                                case "Sun":
-                                    endIndex = 6;
-                                    break;
+                            if (startIndex <= endIndex) {
+                                for (int i = startIndex; i < endIndex + 1; i++) {
+                                    daysofOperation1.add(DaysInAWeek[i]);
 
+                                }
+                            } else if (endIndex < startIndex) {
+                                for (int i = 0; i < 7; i++) {
+                                    if (i <= endIndex || i >= startIndex) {
+                                        daysofOperation1.add(DaysInAWeek[i]);
+                                    }
+
+                                }
                             }
-                            for (int i = startIndex; i < endIndex + 1; i++) {
-                                daysofOperation1.add(DaysInAWeek[i]);
-
-                            }
-
                         }
                     }
                 }
