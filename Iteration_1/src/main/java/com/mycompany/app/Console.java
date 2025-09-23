@@ -8,6 +8,7 @@ import java.util.stream.*;
 public class Console {
     private CityCatalog cityCatalog;
     private ConnectionCatalog connectionCatalog;
+    private ArrayList<Connection> indirectConnectionsCatalog;
 
     public Console() {
         this.cityCatalog = new CityCatalog();
@@ -100,6 +101,11 @@ public class Console {
                 Connection conn = new Connection(routeID, departureCity, arrivalCity, departureTime, arrivalTime,
                         trainType, daysofOperation1, firstClassTicketRate, secondClassTicketRate);
                 connectionCatalog.addConnection(conn);
+
+                // For the Indirect connections as a Deep copy of the original catalog
+                Connection conn1 = new Connection(routeID, departureCity, arrivalCity, departureTime, arrivalTime,
+                        trainType, daysofOperation1, firstClassTicketRate, secondClassTicketRate);
+                indirectConnectionsCatalog.add(conn1);
                 System.out.println("Added : " + routeID + " from " + departureCityName + " to " + arrivalCityName
                         + " Departure: " + departureTime + " Arrival: " + arrivalTime + " Train Type: " + trainType
                         + " Days of Operation: " + daysofOperation1 + " First Class Ticket Rate: "
@@ -111,7 +117,20 @@ public class Console {
         }
     }
 
-    // Prepare the indirect connections based on Arrival City and Departure City
+    // Deep copy of an ArrayList of Connections
+    public ArrayList<Connection> DeepCopy(ArrayList<Connection> catalog) {
+        ArrayList<Connection> newcatalog = new ArrayList<Connection>();
+        for (Connection conn : catalog) {
+            Connection conn1 = new Connection(conn.getRouteID(), conn.departureCity, conn.arrivalCity,
+                    conn.departureTime, conn.arrivalTime, conn.trainType, conn.daysOfOperation,
+                    conn.firstClassTicketRate, conn.secondClassTicketRate);
+            newcatalog.add(conn1);
+        }
+        return newcatalog;
+    }
+
+    // Prepare the indirect connections based on Arrival City and Departure City.
+    // Produces the shallow copy of the original catalog.
     public ArrayList<Connection> PrepareIndirectConnections(ArrayList<Connection> catalog) {
         ArrayList<Connection> newcatalog = new ArrayList<Connection>();
         for (Connection conn1 : catalog) {
@@ -133,7 +152,7 @@ public class Console {
     }
 
     // Below are the methods to filter through the parameters for One Direct
-    // Connection .
+    // Connection . Produces shallow copy of the original catalog
 
     public ArrayList<Connection> ReturnAllConnectionsForDepartureCity(ArrayList<Connection> catalog,
             String departureCityUser) {
