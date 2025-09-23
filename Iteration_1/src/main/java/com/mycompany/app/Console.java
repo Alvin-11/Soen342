@@ -7,12 +7,13 @@ import java.util.stream.*;
 
 public class Console {
     private CityCatalog cityCatalog;
-    private ConnectionCatalog connectionCatalog;
-    private ArrayList<Connection> indirectConnectionsCatalog;
+    public ConnectionCatalog connectionCatalog;
+    public ArrayList<Connection> indirectConnectionsCatalog;
 
     public Console() {
         this.cityCatalog = new CityCatalog();
         this.connectionCatalog = new ConnectionCatalog();
+        this.indirectConnectionsCatalog = new ArrayList<Connection>();
     }
 
     public void addFilePath(String filePath) {
@@ -106,11 +107,15 @@ public class Console {
                 Connection conn1 = new Connection(routeID, departureCity, arrivalCity, departureTime, arrivalTime,
                         trainType, daysofOperation1, firstClassTicketRate, secondClassTicketRate);
                 indirectConnectionsCatalog.add(conn1);
-                System.out.println("Added : " + routeID + " from " + departureCityName + " to " + arrivalCityName
-                        + " Departure: " + departureTime + " Arrival: " + arrivalTime + " Train Type: " + trainType
-                        + " Days of Operation: " + daysofOperation1 + " First Class Ticket Rate: "
-                        + firstClassTicketRate
-                        + " Second Class Ticket Rate: " + secondClassTicketRate);
+                /*
+                 * System.out.println("Added : " + routeID + " from " + departureCityName +
+                 * " to " + arrivalCityName
+                 * + " Departure: " + departureTime + " Arrival: " + arrivalTime +
+                 * " Train Type: " + trainType
+                 * + " Days of Operation: " + daysofOperation1 + " First Class Ticket Rate: "
+                 * + firstClassTicketRate
+                 * + " Second Class Ticket Rate: " + secondClassTicketRate);
+                 */
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -156,21 +161,21 @@ public class Console {
 
     public ArrayList<Connection> ReturnAllConnectionsForDepartureCity(ArrayList<Connection> catalog,
             String departureCityUser) {
-        ArrayList<Connection> newcatalog = catalog.stream().filter(c -> c.departureCity.equals(departureCityUser))
+        return catalog.stream().filter(c -> c.departureCity.getCityName().equalsIgnoreCase(departureCityUser))
                 .collect(Collectors.toCollection(ArrayList::new));
-        return newcatalog;
     }
 
     public ArrayList<Connection> ReturnAllConnectionsForArrivalCity(ArrayList<Connection> catalog,
             String arrivalCityUser) {
-        ArrayList<Connection> newcatalog = catalog.stream().filter(c -> c.arrivalCity.equals(arrivalCityUser))
+        ArrayList<Connection> newcatalog = catalog.stream()
+                .filter(c -> c.arrivalCity.getCityName().equalsIgnoreCase(arrivalCityUser))
                 .collect(Collectors.toCollection(ArrayList::new));
         return newcatalog;
     }
 
     public ArrayList<Connection> ReturnAllConnectionsForTrainType(ArrayList<Connection> catalog,
             String trainTypeUser) {
-        ArrayList<Connection> newcatalog = catalog.stream().filter(c -> c.trainType.equals(trainTypeUser))
+        ArrayList<Connection> newcatalog = catalog.stream().filter(c -> c.trainType.equalsIgnoreCase(trainTypeUser))
                 .collect(Collectors.toCollection(ArrayList::new));
         return newcatalog;
     }
