@@ -139,19 +139,28 @@ public class Console {
     public ArrayList<Connection> PrepareIndirectConnections(ArrayList<Connection> catalog) {
         ArrayList<Connection> newcatalog = new ArrayList<Connection>();
         for (Connection conn1 : catalog) {
+            Connection conn101 = new Connection(conn1.getRouteID(), conn1.departureCity, conn1.arrivalCity,
+                    conn1.departureTime, conn1.arrivalTime, conn1.trainType, conn1.daysOfOperation,
+                    conn1.firstClassTicketRate, conn1.secondClassTicketRate);
             for (Connection conn2 : catalog) {
+                Connection conn201 = new Connection(conn2.getRouteID(), conn2.departureCity, conn2.arrivalCity,
+                        conn2.departureTime, conn2.arrivalTime, conn2.trainType, conn2.daysOfOperation,
+                        conn2.firstClassTicketRate, conn2.secondClassTicketRate);
                 for (Connection conn3 : catalog) {
+                    Connection conn301 = new Connection(conn3.getRouteID(), conn3.departureCity, conn3.arrivalCity,
+                            conn3.departureTime, conn3.arrivalTime, conn3.trainType, conn3.daysOfOperation,
+                            conn3.firstClassTicketRate, conn3.secondClassTicketRate);
                     if (conn2.arrivalCity.equals(conn3.departureCity)
                             && !conn2.departureCity.equals(conn3.arrivalCity)) {
-                        conn2.connections.add(conn3);
+                        conn201.connections.add(conn3);
                     }
                 }
                 if (conn1.arrivalCity.equals(conn2.departureCity)
                         && !conn1.departureCity.equals(conn2.arrivalCity)) {
-                    conn1.connections.add(conn2);
+                    conn101.connections.add(conn201);
                 }
             }
-            newcatalog.add(conn1);
+            newcatalog.add(conn101);
         }
         return newcatalog;
     }
@@ -166,23 +175,106 @@ public class Console {
     }
 
     public ArrayList<Connection> ReturnAllConnectionsForArrivalCity(ArrayList<Connection> catalog,
-            String arrivalCityUser) {
-        ArrayList<Connection> newcatalog = catalog.stream()
-                .filter(c -> c.arrivalCity.getCityName().equalsIgnoreCase(arrivalCityUser))
-                .collect(Collectors.toCollection(ArrayList::new));
+            String arrivalCityUser, int number) {
+
+        ArrayList<Connection> newcatalog = new ArrayList<Connection>();
+
+        if (number == 0) {
+            newcatalog = catalog.stream()
+                    .filter(c -> c.arrivalCity.getCityName().equalsIgnoreCase(arrivalCityUser))
+                    .collect(Collectors.toCollection(ArrayList::new));
+        } else if (number == 1) {
+
+            for (Connection conn1 : catalog) {
+                Connection conn101 = new Connection(conn1.getRouteID(), conn1.departureCity, conn1.arrivalCity,
+                        conn1.departureTime, conn1.arrivalTime, conn1.trainType, conn1.daysOfOperation,
+                        conn1.firstClassTicketRate, conn1.secondClassTicketRate);
+                for (Connection conn2 : conn1.connections) {
+                    Connection conn201 = new Connection(conn2.getRouteID(), conn2.departureCity, conn2.arrivalCity,
+                            conn2.departureTime, conn2.arrivalTime, conn2.trainType, conn2.daysOfOperation,
+                            conn2.firstClassTicketRate, conn2.secondClassTicketRate);
+                    if (conn2.arrivalCity.getCityName().equals(arrivalCityUser)) {
+                        conn101.connections.add(conn201);
+                    }
+                }
+                newcatalog.add(conn101);
+            }
+        } else if (number == 2) {
+            for (Connection conn1 : catalog) {
+                Connection conn101 = new Connection(conn1.getRouteID(), conn1.departureCity, conn1.arrivalCity,
+                        conn1.departureTime, conn1.arrivalTime, conn1.trainType, conn1.daysOfOperation,
+                        conn1.firstClassTicketRate, conn1.secondClassTicketRate);
+                for (Connection conn2 : conn1.connections) {
+                    Connection conn201 = new Connection(conn2.getRouteID(), conn2.departureCity, conn2.arrivalCity,
+                            conn2.departureTime, conn2.arrivalTime, conn2.trainType, conn2.daysOfOperation,
+                            conn2.firstClassTicketRate, conn2.secondClassTicketRate);
+                    for (Connection conn3 : conn2.connections) {
+                        if (conn3.arrivalCity.getCityName().equals(arrivalCityUser)) {
+                            conn201.connections.add(conn3);
+                        }
+                    }
+                    conn101.connections.add(conn201);
+                }
+                newcatalog.add(conn101);
+            }
+        }
+
         return newcatalog;
     }
 
     public ArrayList<Connection> ReturnAllConnectionsForTrainType(ArrayList<Connection> catalog,
-            String trainTypeUser) {
-        ArrayList<Connection> newcatalog = catalog.stream().filter(c -> c.trainType.equalsIgnoreCase(trainTypeUser))
-                .collect(Collectors.toCollection(ArrayList::new));
+            String trainTypeUser, int number) {
+        ArrayList<Connection> newcatalog = new ArrayList<Connection>();
+        if (number == 0) {
+            newcatalog = catalog.stream().filter(c -> c.trainType.equalsIgnoreCase(trainTypeUser))
+                    .collect(Collectors.toCollection(ArrayList::new));
+        } else if (number == 1) {
+            for (Connection conn1 : catalog) {
+                Connection conn101 = new Connection(conn1.getRouteID(), conn1.departureCity, conn1.arrivalCity,
+                        conn1.departureTime, conn1.arrivalTime, conn1.trainType, conn1.daysOfOperation,
+                        conn1.firstClassTicketRate, conn1.secondClassTicketRate);
+                if (conn1.trainType.equals(trainTypeUser)) {
+                    for (Connection conn2 : conn1.connections) {
+                        Connection conn201 = new Connection(conn2.getRouteID(), conn2.departureCity, conn2.arrivalCity,
+                                conn2.departureTime, conn2.arrivalTime, conn2.trainType, conn2.daysOfOperation,
+                                conn2.firstClassTicketRate, conn2.secondClassTicketRate);
+                        if (conn2.trainType.equals(trainTypeUser)) {
+                            conn101.connections.add(conn201);
+                        }
+                    }
+                }
+                newcatalog.add(conn101);
+            }
+        } else if (number == 2) {
+            for (Connection conn1 : catalog) {
+                Connection conn101 = new Connection(conn1.getRouteID(), conn1.departureCity, conn1.arrivalCity,
+                        conn1.departureTime, conn1.arrivalTime, conn1.trainType, conn1.daysOfOperation,
+                        conn1.firstClassTicketRate, conn1.secondClassTicketRate);
+                if (conn1.trainType.equals(trainTypeUser)) {
+                    for (Connection conn2 : conn1.connections) {
+                        Connection conn201 = new Connection(conn2.getRouteID(), conn2.departureCity, conn2.arrivalCity,
+                                conn2.departureTime, conn2.arrivalTime, conn2.trainType, conn2.daysOfOperation,
+                                conn2.firstClassTicketRate, conn2.secondClassTicketRate);
+                        if (conn2.trainType.equals(trainTypeUser)) {
+                            for (Connection conn3 : conn2.connections) {
+                                if (conn3.trainType.equals(trainTypeUser)) {
+                                    conn201.connections.add(conn3);
+                                }
+                            }
+                        }
+                        conn101.connections.add(conn201);
+                    }
+                }
+                newcatalog.add(conn101);
+            }
+        }
         return newcatalog;
     }
 
     public ArrayList<Connection> ReturnAllConnectionsForFirstClassTicket(ArrayList<Connection> catalog,
             double lowerPrice, double upperPrice) {
-        ArrayList<Connection> newcatalog = catalog.stream()
+        ArrayList<Connection> newcatalog = new ArrayList<Connection>();
+        newcatalog = catalog.stream()
                 .filter(c -> c.firstClassTicketRate >= lowerPrice | c.firstClassTicketRate <= upperPrice)
                 .collect(Collectors.toCollection(ArrayList::new));
         return newcatalog;
