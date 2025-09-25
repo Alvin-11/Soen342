@@ -37,52 +37,7 @@ public class Console {
                 String daysOfOperation = row[6];
                 double firstClassTicketRate = Double.parseDouble(row[7]);
                 double secondClassTicketRate = Double.parseDouble(row[8]);
-                String[] DaysInAWeek = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-                String[] DaysInaWeekShortened = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
-                ArrayList<String> daysofOperation1 = new ArrayList<String>();
-
-                // Specify the days of the week the train operates
-                if (daysOfOperation.equals("Daily")) {
-                    for (String day : DaysInAWeek) {
-                        daysofOperation1.add(day);
-                    }
-                } else {
-                    String[] days = daysOfOperation.split(",");
-                    for (String data : days) {
-                        if (data.length() < 6) {
-                            for (int i = 0; i < 7; i++) {
-                                if (data.equals(DaysInaWeekShortened[i])) {
-                                    daysofOperation1.add(DaysInAWeek[i]);
-                                }
-                            }
-                        } else if (data.length() == 7) {
-                            String[] dayStrings = data.split("-");
-                            int startIndex = 0;
-                            int endIndex = 0;
-                            for (int i = 0; i < 7; i++) {
-                                if (dayStrings[0].equals(DaysInaWeekShortened[i])) {
-                                    startIndex = i;
-                                }
-                                if (dayStrings[1].equals(DaysInaWeekShortened[i])) {
-                                    endIndex = i;
-                                }
-                            }
-                            if (startIndex <= endIndex) {
-                                for (int i = startIndex; i < endIndex + 1; i++) {
-                                    daysofOperation1.add(DaysInAWeek[i]);
-
-                                }
-                            } else if (endIndex < startIndex) {
-                                for (int i = 0; i < 7; i++) {
-                                    if (i <= endIndex || i >= startIndex) {
-                                        daysofOperation1.add(DaysInAWeek[i]);
-                                    }
-
-                                }
-                            }
-                        }
-                    }
-                }
+                ArrayList<String> daysofOperation1 = DaysOfOperationStringProcessing(daysOfOperation);
 
                 // check if the departure and arrival cities already exist
                 City departureCity = cityCatalog.getCity(departureCityName);
@@ -107,37 +62,66 @@ public class Console {
                 Connection conn1 = new Connection(routeID, departureCity, arrivalCity, departureTime, arrivalTime,
                         trainType, daysofOperation1, firstClassTicketRate, secondClassTicketRate);
                 indirectConnectionsCatalog.add(conn1);
-                /*
-                 * System.out.println("Added : " + routeID + " from " + departureCityName +
-                 * " to " + arrivalCityName
-                 * + " Departure: " + departureTime + " Arrival: " + arrivalTime +
-                 * " Train Type: " + trainType
-                 * + " Days of Operation: " + daysofOperation1 + " First Class Ticket Rate: "
-                 * + firstClassTicketRate
-                 * + " Second Class Ticket Rate: " + secondClassTicketRate);
-                 */
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    public ArrayList<String> DaysOfOperationStringProcessing(String daysOfOperation) {
+        String[] DaysInAWeek = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+        String[] DaysInaWeekShortened = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+        ArrayList<String> daysofOperation1 = new ArrayList<String>();
+        if (daysOfOperation.equals("Daily")) {
+            for (String day : DaysInAWeek) {
+                daysofOperation1.add(day);
+            }
+        } else {
+            String[] days = daysOfOperation.split(",");
+            for (String data : days) {
+                if (data.length() < 6) {
+                    for (int i = 0; i < 7; i++) {
+                        if (data.equals(DaysInaWeekShortened[i])) {
+                            daysofOperation1.add(DaysInAWeek[i]);
+                        }
+                    }
+                } else if (data.length() == 7) {
+                    String[] dayStrings = data.split("-");
+                    int startIndex = 0;
+                    int endIndex = 0;
+                    for (int i = 0; i < 7; i++) {
+                        if (dayStrings[0].equals(DaysInaWeekShortened[i])) {
+                            startIndex = i;
+                        }
+                        if (dayStrings[1].equals(DaysInaWeekShortened[i])) {
+                            endIndex = i;
+                        }
+                    }
+                    if (startIndex <= endIndex) {
+                        for (int i = startIndex; i < endIndex + 1; i++) {
+                            daysofOperation1.add(DaysInAWeek[i]);
+
+                        }
+                    } else if (endIndex < startIndex) {
+                        for (int i = 0; i < 7; i++) {
+                            if (i <= endIndex || i >= startIndex) {
+                                daysofOperation1.add(DaysInAWeek[i]);
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+        return daysofOperation1;
+    }
+
     // Deep copy of an ArrayList of Connections
     public ArrayList<Connection> DeepCopy(ArrayList<Connection> catalog) {
         ArrayList<Connection> newcatalog = new ArrayList<Connection>();
         for (Connection conn : catalog) {
-            City departureCity = cityCatalog.getCity(conn.departureCity.getCityName());
-            City arrivalCity = cityCatalog.getCity(conn.arrivalCity.getCityName());
-
-            if (departureCity == null) {
-                departureCity = new City(conn.departureCity.getCityName());
-                cityCatalog.addCity(departureCity);
-            }
-
-            if (arrivalCity == null) {
-                arrivalCity = new City(conn.arrivalCity.getCityName());
-                cityCatalog.addCity(arrivalCity);
-            }
+            City departureCity = new City(conn.departureCity.getCityName());
+            City arrivalCity = new City(conn.arrivalCity.getCityName());
             Connection conn1 = new Connection(conn.getRouteID(), departureCity, arrivalCity,
                     conn.departureTime, conn.arrivalTime, conn.trainType, conn.daysOfOperation,
                     conn.firstClassTicketRate, conn.secondClassTicketRate);
