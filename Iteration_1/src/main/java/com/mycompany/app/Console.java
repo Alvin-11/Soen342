@@ -126,7 +126,19 @@ public class Console {
     public ArrayList<Connection> DeepCopy(ArrayList<Connection> catalog) {
         ArrayList<Connection> newcatalog = new ArrayList<Connection>();
         for (Connection conn : catalog) {
-            Connection conn1 = new Connection(conn.getRouteID(), conn.departureCity, conn.arrivalCity,
+            City departureCity = cityCatalog.getCity(conn.departureCity.getCityName());
+            City arrivalCity = cityCatalog.getCity(conn.arrivalCity.getCityName());
+
+            if (departureCity == null) {
+                departureCity = new City(conn.departureCity.getCityName());
+                cityCatalog.addCity(departureCity);
+            }
+
+            if (arrivalCity == null) {
+                arrivalCity = new City(conn.arrivalCity.getCityName());
+                cityCatalog.addCity(arrivalCity);
+            }
+            Connection conn1 = new Connection(conn.getRouteID(), departureCity, arrivalCity,
                     conn.departureTime, conn.arrivalTime, conn.trainType, conn.daysOfOperation,
                     conn.firstClassTicketRate, conn.secondClassTicketRate);
             newcatalog.add(conn1);
@@ -272,19 +284,99 @@ public class Console {
     }
 
     public ArrayList<Connection> ReturnAllConnectionsForFirstClassTicket(ArrayList<Connection> catalog,
-            double lowerPrice, double upperPrice) {
+            double lowerPrice, double upperPrice, int number) {
         ArrayList<Connection> newcatalog = new ArrayList<Connection>();
-        newcatalog = catalog.stream()
-                .filter(c -> c.firstClassTicketRate >= lowerPrice | c.firstClassTicketRate <= upperPrice)
-                .collect(Collectors.toCollection(ArrayList::new));
+        if (number == 0) {
+            newcatalog = catalog.stream()
+                    .filter(c -> c.firstClassTicketRate >= lowerPrice | c.firstClassTicketRate <= upperPrice)
+                    .collect(Collectors.toCollection(ArrayList::new));
+        } else if (number == 1) {
+            for (Connection conn1 : catalog) {
+                Connection conn101 = new Connection(conn1.getRouteID(), conn1.departureCity, conn1.arrivalCity,
+                        conn1.departureTime, conn1.arrivalTime, conn1.trainType, conn1.daysOfOperation,
+                        conn1.firstClassTicketRate, conn1.secondClassTicketRate);
+                for (Connection conn2 : conn1.connections) {
+                    Connection conn201 = new Connection(conn2.getRouteID(), conn2.departureCity, conn2.arrivalCity,
+                            conn2.departureTime, conn2.arrivalTime, conn2.trainType, conn2.daysOfOperation,
+                            conn2.firstClassTicketRate, conn2.secondClassTicketRate);
+                    if ((conn2.firstClassTicketRate + conn1.firstClassTicketRate) >= lowerPrice
+                            & (conn2.firstClassTicketRate + conn1.firstClassTicketRate) <= upperPrice) {
+                        conn101.connections.add(conn201);
+                    }
+                }
+
+                newcatalog.add(conn101);
+            }
+        } else if (number == 2) {
+            for (Connection conn1 : catalog) {
+                Connection conn101 = new Connection(conn1.getRouteID(), conn1.departureCity, conn1.arrivalCity,
+                        conn1.departureTime, conn1.arrivalTime, conn1.trainType, conn1.daysOfOperation,
+                        conn1.firstClassTicketRate, conn1.secondClassTicketRate);
+                for (Connection conn2 : conn1.connections) {
+                    Connection conn201 = new Connection(conn2.getRouteID(), conn2.departureCity, conn2.arrivalCity,
+                            conn2.departureTime, conn2.arrivalTime, conn2.trainType, conn2.daysOfOperation,
+                            conn2.firstClassTicketRate, conn2.secondClassTicketRate);
+                    for (Connection conn3 : conn2.connections) {
+                        if ((conn2.firstClassTicketRate + conn1.firstClassTicketRate
+                                + conn3.firstClassTicketRate) >= lowerPrice
+                                & (conn2.firstClassTicketRate + conn1.firstClassTicketRate
+                                        + conn3.firstClassTicketRate) <= upperPrice) {
+                            conn201.connections.add(conn3);
+                        }
+                    }
+                    conn101.connections.add(conn201);
+                }
+                newcatalog.add(conn101);
+            }
+        }
         return newcatalog;
     }
 
     public ArrayList<Connection> ReturnAllConnectionsForSecondClassTicket(ArrayList<Connection> catalog,
-            double lowerPrice, double upperPrice) {
-        ArrayList<Connection> newcatalog = catalog.stream()
-                .filter(c -> c.secondClassTicketRate >= lowerPrice | c.secondClassTicketRate <= upperPrice)
-                .collect(Collectors.toCollection(ArrayList::new));
+            double lowerPrice, double upperPrice, int number) {
+        ArrayList<Connection> newcatalog = new ArrayList<Connection>();
+        if (number == 0) {
+            newcatalog = catalog.stream()
+                    .filter(c -> c.secondClassTicketRate >= lowerPrice | c.secondClassTicketRate <= upperPrice)
+                    .collect(Collectors.toCollection(ArrayList::new));
+        } else if (number == 1) {
+            for (Connection conn1 : catalog) {
+                Connection conn101 = new Connection(conn1.getRouteID(), conn1.departureCity, conn1.arrivalCity,
+                        conn1.departureTime, conn1.arrivalTime, conn1.trainType, conn1.daysOfOperation,
+                        conn1.firstClassTicketRate, conn1.secondClassTicketRate);
+                for (Connection conn2 : conn1.connections) {
+                    Connection conn201 = new Connection(conn2.getRouteID(), conn2.departureCity, conn2.arrivalCity,
+                            conn2.departureTime, conn2.arrivalTime, conn2.trainType, conn2.daysOfOperation,
+                            conn2.firstClassTicketRate, conn2.secondClassTicketRate);
+                    if ((conn2.secondClassTicketRate + conn1.secondClassTicketRate) >= lowerPrice
+                            & (conn2.secondClassTicketRate + conn1.secondClassTicketRate) <= upperPrice) {
+                        conn101.connections.add(conn201);
+                    }
+                }
+                newcatalog.add(conn101);
+            }
+        } else if (number == 2) {
+            for (Connection conn1 : catalog) {
+                Connection conn101 = new Connection(conn1.getRouteID(), conn1.departureCity, conn1.arrivalCity,
+                        conn1.departureTime, conn1.arrivalTime, conn1.trainType, conn1.daysOfOperation,
+                        conn1.firstClassTicketRate, conn1.secondClassTicketRate);
+                for (Connection conn2 : conn1.connections) {
+                    Connection conn201 = new Connection(conn2.getRouteID(), conn2.departureCity, conn2.arrivalCity,
+                            conn2.departureTime, conn2.arrivalTime, conn2.trainType, conn2.daysOfOperation,
+                            conn2.firstClassTicketRate, conn2.secondClassTicketRate);
+                    for (Connection conn3 : conn2.connections) {
+                        if ((conn2.secondClassTicketRate + conn1.secondClassTicketRate
+                                + conn3.secondClassTicketRate) >= lowerPrice
+                                & (conn2.secondClassTicketRate + conn1.secondClassTicketRate
+                                        + conn3.secondClassTicketRate) <= upperPrice) {
+                            conn201.connections.add(conn3);
+                        }
+                    }
+                    conn101.connections.add(conn201);
+                }
+                newcatalog.add(conn101);
+            }
+        }
         return newcatalog;
     }
 }

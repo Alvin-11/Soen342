@@ -9,10 +9,16 @@ public class App {
         console.addFilePath("C:/Soen342/Iteration_1/src/main/resources/eu_rail_network.csv");
         ArrayList<Connection> catalog = console.DeepCopy(console.indirectConnectionsCatalog);
         catalog = console.PrepareIndirectConnections(catalog);
-        ArrayList<Connection> catalog1 = console.ReturnAllConnectionsForArrivalCity(catalog, "Warsaw", 1);
+        ArrayList<Connection> catalog1 = console.ReturnAllConnectionsForTrainType(catalog, "InterCity", 1);
         for (Connection conn1 : catalog1) {
             for (Connection conn : conn1.connections) {
-                System.out.println("|" + conn.getRouteID() + "|" + conn.departureCity.getCityName() + "|"
+                System.out.println("|" + conn1.getRouteID() + "|" + conn1.departureCity.getCityName() + "|"
+                        + conn1.arrivalCity.getCityName()
+                        + "|" + conn1.departureTime + "|" + conn1.arrivalTime + "|" + conn1.trainType
+                        + "|" + conn1.daysOfOperation + "|"
+                        + conn1.firstClassTicketRate
+                        + "|" + conn1.secondClassTicketRate + "|" + "--->|" + conn.getRouteID() + "|"
+                        + conn.departureCity.getCityName() + "|"
                         + conn.arrivalCity.getCityName()
                         + "|" + conn.departureTime + "|" + conn.arrivalTime + "|" + conn.trainType
                         + "|" + conn.daysOfOperation + "|"
