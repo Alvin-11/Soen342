@@ -20,4 +20,8 @@ public class CityCatalog {
     public void deleteCity(City city) {
         this.cities.remove(city.getCityName());
     }
+
+    public City getCitybyName(String cityName){
+        return cities.get(cityName);
+    }
 }

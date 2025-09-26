@@ -13,6 +13,7 @@ public class Connection {
     public double firstClassTicketRate;
     public double secondClassTicketRate;
     public ArrayList<Connection> connections = new ArrayList<Connection>();
+    public Connection connection ;
 
     public Connection(String routeID, City departureCity, City arrivalCity, String departureTime, String arrivalTime,
             String trainType, ArrayList<String> daysOfOperation, double firstClassTicketRate,

@@ -1,16 +1,17 @@
 package com.mycompany.app;
 
-import java.util.*;
+import java.util.ArrayList;
 
 public class App {
     public static void main(String[] args) {
         Console console = new Console();
         System.out.println("Welcome to the Train Connection App!");
         console.addFilePath("C:/Soen342/Iteration_1/src/main/resources/eu_rail_network.csv");
+        System.out.println("File loaded!");
         ArrayList<Connection> catalog = console.DeepCopy(console.indirectConnectionsCatalog);
         catalog = console.PrepareIndirectConnections(catalog);
-        ArrayList<Connection> catalog1 = console.ReturnAllConnectionsForTrainType(catalog, "InterCity", 1);
-        for (Connection conn1 : catalog1) {
+        catalog = console.ReturnAllConnectionsForTrainType(catalog, "Eurostar", 0);
+        for (Connection conn1 : catalog) {
             for (Connection conn : conn1.connections) {
                 System.out.println("|" + conn1.getRouteID() + "|" + conn1.departureCity.getCityName() + "|"
                         + conn1.arrivalCity.getCityName()
@@ -26,7 +27,7 @@ public class App {
                         + "|" + conn.secondClassTicketRate + "|");
             }
         }
-        System.out.println("Welcome to the Train Connection App!");
+        System.out.println("Welcome to the Train Connection App1!");
         // CLI cli = new CLI();
         // cli.start();
     }

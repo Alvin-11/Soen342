@@ -1,13 +1,14 @@
 package com.mycompany.app;
 
 import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 import com.opencsv.CSVReader;
-import java.util.*;
-import java.util.stream.*;
 
 public class Console {
     private CityCatalog cityCatalog;
-    public ConnectionCatalog connectionCatalog;
+    private  ConnectionCatalog connectionCatalog;
     public ArrayList<Connection> indirectConnectionsCatalog;
 
     public Console() {
@@ -53,6 +54,7 @@ public class Console {
                     cityCatalog.addCity(arrivalCity);
                 }
 
+
                 // create the Connection object and add it to the catalog
                 Connection conn = new Connection(routeID, departureCity, arrivalCity, departureTime, arrivalTime,
                         trainType, daysofOperation1, firstClassTicketRate, secondClassTicketRate);
@@ -62,6 +64,7 @@ public class Console {
                 Connection conn1 = new Connection(routeID, departureCity, arrivalCity, departureTime, arrivalTime,
                         trainType, daysofOperation1, firstClassTicketRate, secondClassTicketRate);
                 indirectConnectionsCatalog.add(conn1);
+                // System.out.println("Connection added: " + routeID);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -116,6 +119,19 @@ public class Console {
         return daysofOperation1;
     }
 
+    public CityCatalog SetCityConnections() {
+        for(Connection conn : connectionCatalog.getAllConnections()){
+            cityCatalog.getCitybyName(conn.departureCity.getCityName()).addArrivalCity(conn.arrivalCity.getCityName(), conn); 
+            cityCatalog.getCitybyName(conn.arrivalCity.getCityName()).addDepartureCity(conn.departureCity.getCityName(), conn);
+        }
+        return cityCatalog;
+    }
+    
+     public CityCatalog ReturnAllConnectionsForDepartureCityHashMap(CityCatalog catalog,
+            String departureCityUser, int number) {
+                CityCatalog newcatalog = new CityCatalog();
+            }
+
     // Deep copy of an ArrayList of Connections
     public ArrayList<Connection> DeepCopy(ArrayList<Connection> catalog) {
         ArrayList<Connection> newcatalog = new ArrayList<Connection>();
@@ -146,13 +162,13 @@ public class Console {
                     Connection conn301 = new Connection(conn3.getRouteID(), conn3.departureCity, conn3.arrivalCity,
                             conn3.departureTime, conn3.arrivalTime, conn3.trainType, conn3.daysOfOperation,
                             conn3.firstClassTicketRate, conn3.secondClassTicketRate);
-                    if (conn2.arrivalCity.equals(conn3.departureCity)
-                            && !conn2.departureCity.equals(conn3.arrivalCity)) {
-                        conn201.connections.add(conn3);
+                    if (conn2.arrivalCity.getCityName().equals(conn3.departureCity.getCityName())
+                            && !conn2.departureCity.getCityName().equals(conn3.arrivalCity.getCityName())) {
+                        conn201.connections.add(conn301);
                     }
                 }
-                if (conn1.arrivalCity.equals(conn2.departureCity)
-                        && !conn1.departureCity.equals(conn2.arrivalCity)) {
+                if (conn1.arrivalCity.getCityName().equals(conn2.departureCity.getCityName())
+                        && !conn1.departureCity.getCityName().equals(conn2.arrivalCity.getCityName())) {
                     conn101.connections.add(conn201);
                 }
             }
@@ -163,6 +179,7 @@ public class Console {
 
     // Below are the methods to filter through the parameters for One Direct
     // Connection . Produces shallow copy of the original catalog
+
 
     public ArrayList<Connection> ReturnAllConnectionsForDepartureCity(ArrayList<Connection> catalog,
             String departureCityUser) {
