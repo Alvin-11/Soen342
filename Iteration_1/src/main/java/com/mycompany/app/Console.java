@@ -1,18 +1,61 @@
 package com.mycompany.app;
 
 import java.io.FileReader;
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 import java.util.*;
 import com.opencsv.CSVReader;
 
 public class Console {
+    private boolean running;
+
     private CityCatalog cityCatalog;
-    private  ConnectionCatalog connectionCatalog;
+    private ConnectionCatalog connectionCatalog;
+
+    private Scanner scanner;
 
     public Console() {
+        this.running = false;
+
         this.cityCatalog = new CityCatalog();
         this.connectionCatalog = new ConnectionCatalog();
+
+        this.scanner = new Scanner(System.in);
+    }
+
+    // Called from main to start the console
+    public void start() {
+        this.running = true;
+        // Run csv processing here
+        ConsoleFormatter.printHeader("Welcome to the European Rail Planning System");
+
+        while (running) {
+            ConsoleFormatter.displayMenu();
+            handleUserInput();
+        }
+    }
+
+    // Route user choice from main menu to the proper handler class/method
+    private void handleUserInput() {
+        try {
+            int choice = scanner.nextInt();
+            switch (choice) {
+                case 1:
+                case 2:
+                case 3:
+                    // ...
+                    // Invalid choice
+                default:
+                    ConsoleFormatter.printSeperatorLine();
+                    ConsoleFormatter.printBoxedLine("Please select a valid option");
+            }
+            // Non int
+        } catch (Exception e) {
+            ConsoleFormatter.printSeperatorLine();
+            ConsoleFormatter.printBoxedLine("Please enter a valid number");
+
+            // Clear the current input
+            scanner.nextLine();
+        }
     }
 
     public void addFilePath(String filePath) {
@@ -107,5 +150,81 @@ public class Console {
             }
         }
         return daysofOperation1;
+    }
+
+    // Helper class to contain all methods related to printing to the ✨console✨
+    private class ConsoleFormatter {
+        private static final int CONSOLE_WIDTH = 80;
+        private static final String BORDER_CHAR = "█";
+        private static final String PADDING_CHAR = " ";
+
+        private ConsoleFormatter() {
+        }
+
+        private static void displayMenu() {
+            printSeperatorLine();
+            printCenteredLine("Search Filters");
+            printSeperatorLine();
+            printBoxedLine("1. Departure City");
+            printBoxedLine("2. Arrival City");
+            printBoxedLine("3. Departure Time");
+            printBoxedLine("4. Arrival Time");
+            printBoxedLine("5. Train Type");
+            printBoxedLine("6. Days of Operation");
+            printBoxedLine("7. Train Class Tier");
+            printSeperatorLine();
+            printPrompt("Enter your selection: ");
+        }
+
+        private static void printPrompt(String prompt) {
+            System.out.print(BORDER_CHAR + " " + prompt);
+        }
+
+        private static void printHeader(String title) {
+            printBorderLine();
+            printCenteredLine(title);
+            printBorderLine();
+        }
+
+        private static void printBorderLine() {
+            System.out.println(BORDER_CHAR.repeat(CONSOLE_WIDTH));
+        }
+
+        private static void printCenteredLine(String text) {
+            int padding = (CONSOLE_WIDTH - text.length() - 2) / 2;
+            String leftPadding = PADDING_CHAR.repeat(padding);
+            String rightPadding = PADDING_CHAR.repeat(CONSOLE_WIDTH - text.length() - padding - 2);
+            System.out.println(BORDER_CHAR + leftPadding + text + rightPadding + BORDER_CHAR);
+        }
+
+        private static void printBoxedLine(String text) {
+            int contentWidth = CONSOLE_WIDTH - 4;
+            if (text.length() > contentWidth) {
+                text = text.substring(0, contentWidth - 3) + "...";
+            }
+
+            String padding = PADDING_CHAR.repeat(contentWidth - text.length());
+            System.out.println(BORDER_CHAR + " " + text + padding + " " + BORDER_CHAR);
+        }
+
+        private static void printSeperatorLine() {
+            System.out.println(BORDER_CHAR + "-".repeat(CONSOLE_WIDTH - 2) + BORDER_CHAR);
+        }
+
+        private static void clearConsole(){
+            try {
+                // Windows implementation
+                if (System.getProperty("os.name").contains("Windows")){
+                    new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+                } else{
+                    // MacOs and Linux
+                    System.out.print("\033[2J\033[H");
+                    System.out.flush();
+                }
+            } catch (Exception e) {
+                // Fallback
+                for (int i = 0; i<50 ;i++) System.out.println();
+            }
+        }
     }
 }
