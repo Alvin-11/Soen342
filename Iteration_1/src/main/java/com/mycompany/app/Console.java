@@ -210,5 +210,21 @@ public class Console {
         private static void printSeperatorLine() {
             System.out.println(BORDER_CHAR + "-".repeat(CONSOLE_WIDTH - 2) + BORDER_CHAR);
         }
+
+        private static void clearConsole(){
+            try {
+                // Windows implementation
+                if (System.getProperty("os.name").contains("Windows")){
+                    new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+                } else{
+                    // MacOs and Linux
+                    System.out.print("\033[2J\033[H");
+                    System.out.flush();
+                }
+            } catch (Exception e) {
+                // Fallback
+                for (int i = 0; i<50 ;i++) System.out.println();
+            }
+        }
     }
 }
