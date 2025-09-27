@@ -9,6 +9,7 @@ public class Console {
 
     private CityCatalog cityCatalog;
     private ConnectionCatalog connectionCatalog;
+    private Search currentSearch;
 
     private Scanner scanner;
 
@@ -17,6 +18,7 @@ public class Console {
 
         this.cityCatalog = new CityCatalog();
         this.connectionCatalog = new ConnectionCatalog();
+        this.currentSearch = new Search();
 
         this.scanner = new Scanner(System.in);
     }
