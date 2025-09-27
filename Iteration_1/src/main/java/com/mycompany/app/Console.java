@@ -75,10 +75,9 @@ public class Console {
                 String departureTime = row[3];
                 String arrivalTime = row[4];
                 String trainType = row[5];
-                String daysOfOperation = row[6];
+                ArrayList<String> daysOfOperation = DaysOfOperationStringProcessing(row[6]);
                 double firstClassTicketRate = Double.parseDouble(row[7]);
                 double secondClassTicketRate = Double.parseDouble(row[8]);
-                ArrayList<String> daysofOperation1 = DaysOfOperationStringProcessing(daysOfOperation);
 
                 // check if the departure and arrival cities already exist
                 City departureCity = cityCatalog.getCity(departureCityName);
@@ -95,8 +94,14 @@ public class Console {
                 }
                 // create the Connection object and add it to the catalog
                 Connection conn = new Connection(routeID, departureCity, arrivalCity, departureTime, arrivalTime,
-                        trainType, daysofOperation1, firstClassTicketRate, secondClassTicketRate);
+                        trainType, daysOfOperation, firstClassTicketRate, secondClassTicketRate);
                 connectionCatalog.addConnection(conn);
+
+                // add the connection to the incoming connections of the arrival city
+                arrivalCity.incomingConnections.add(conn);
+
+                // add the connection to the outgoing connections of the departure city
+                departureCity.outgoingConnections.add(conn);
             }
         } catch (Exception e) {
             e.printStackTrace();
