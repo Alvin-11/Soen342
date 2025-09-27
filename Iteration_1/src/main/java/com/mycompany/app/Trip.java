@@ -99,8 +99,13 @@ public class Trip {
                     }
 
                     // offset the travel time
-                    this.travelTime += connArrivalMinutes - connDepartureMinutes + (currConn.arrivalTime.endsWith("(+1d)") ? MINUTES_PER_DAY : 0);
-                
+                    this.travelTime += connArrivalMinutes - connDepartureMinutes;
+                    
+                    if (currConn.arrivalTime.endsWith("(+1d)")) {
+                        this.travelTime += MINUTES_PER_DAY;
+                        dayIndex = (dayIndex + 1) % 7; // go to the next day
+                    }
+
                     // set the currDayMinutes to the connArrivalMinutes and the departureFound to be true
                     currDayMinutes = connArrivalMinutes;
                     departureFound = true;
