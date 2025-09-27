@@ -1,5 +1,7 @@
 package com.mycompany.app;
+
 import java.util.ArrayList;
+
 public class Connection {
     private String routeID;
     public City departureCity;
