@@ -9,6 +9,24 @@ public class Search {
     private String arrivalTime;
     private String trainType;
     private String daysOfOperation;
+    private Double minCost;
+    private Double maxCost;
+    public Double getMinCost() {
+        return minCost;
+    }
+
+    public void setMinCost(Double minCost) {
+        this.minCost = minCost;
+    }
+
+    public Double getMaxCost() {
+        return maxCost;
+    }
+
+    public void setMaxCost(Double maxCost) {
+        this.maxCost = maxCost;
+    }
+
     private String seatingClass;
     private String sortBy;
     private String Order;
