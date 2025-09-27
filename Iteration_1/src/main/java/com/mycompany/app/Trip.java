@@ -3,7 +3,9 @@ package com.mycompany.app;
 import java.util.ArrayList;
 
 public class Trip {
-    private final int MINUTES_PER_DAY = 24 * 60;
+    private static final int MINUTES_PER_HOUR = 60;
+    private static final int MINUTES_PER_DAY = MINUTES_PER_HOUR * 24;
+    private static final int MINUTES_PER_WEEK = MINUTES_PER_DAY * 7;
 
     private City departureCity;
     private City arrivalCity;
@@ -51,6 +53,7 @@ public class Trip {
         for (int i = 0; i < DaysInAWeek.length; i++) {
             if (departureDay.equals(DaysInAWeek[i])) {
                 dayIndex = i;
+                break;
             }
         }
 
@@ -140,8 +143,40 @@ public class Trip {
         return secondClassTicketRate;
     }
 
+    public int getDepartureTime() {
+        return departureTime;
+    }
+
+    public int getInitialWaitTime() {
+        return initialWaitTime;
+    }
+
+    public int getTravelTime() {
+        return travelTime;
+    }
+
+    public int getChangeWaitTime() {
+        return changeWaitTime;
+    }
+
     public int getNumberOfConnections() {
         return connections.size();
+    }
+
+    public String getDepartureDate() {
+        return minutesToDate(departureTime + initialWaitTime);
+    }
+
+    public String getArrivalDate() {
+        return minutesToDate(departureTime + initialWaitTime + travelTime + changeWaitTime);
+    }
+
+    public String getTripDuration() {
+        return minutesToElapsedTime(travelTime + changeWaitTime);
+    }
+
+    public String getWaitTimeDuration() {
+        return minutesToElapsedTime(changeWaitTime);
     }
 
     private int timeToMinutes(String time) {
@@ -156,6 +191,31 @@ public class Trip {
             throw new IllegalArgumentException("The provided departure time does not represent a valid time.");
         }
 
-        return (60 * hours) + minutes;
+        return (MINUTES_PER_HOUR * hours) + minutes;
+    }
+
+    private String minutesToDate(int minutes) {
+        String[] DaysInAWeek = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+
+        int weeks = minutes / MINUTES_PER_WEEK;
+        minutes %= MINUTES_PER_WEEK;
+    
+        int days = minutes / MINUTES_PER_DAY;
+        minutes %= MINUTES_PER_DAY;
+    
+        int hours = minutes / MINUTES_PER_HOUR;
+        minutes %= MINUTES_PER_HOUR;
+
+        return String.format("%s %02d:%02d", DaysInAWeek[days], hours, minutes) + (weeks > 0 ? " (+" + weeks + "w)" : "");
+    }
+
+    private String minutesToElapsedTime(int minutes) {
+        int days = minutes / MINUTES_PER_DAY;
+        minutes %= MINUTES_PER_DAY;
+    
+        int hours = minutes / MINUTES_PER_HOUR;
+        minutes %= MINUTES_PER_HOUR;
+
+        return (days > 0 ? days + "d " : "") + hours + "h " + minutes + "m";
     }
 }
