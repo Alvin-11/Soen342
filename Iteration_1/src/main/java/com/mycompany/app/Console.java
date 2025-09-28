@@ -1,7 +1,9 @@
 package com.mycompany.app;
 
 import java.io.FileReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Scanner;
+
 import com.opencsv.CSVReader;
 
 public class Console {
@@ -156,6 +158,124 @@ public class Console {
             }
         }
         return daysofOperation1;
+    }
+    
+    // This method essentials loops through the cities and their connections to find all possible trips from 0 stop t0 2 stop that match the search criteria for departure city and arrival city
+    public ArrayList<Trip> filterbyDepartureCityAndArrivalCity(String DepartureCity, String ArrivalCity, String departureDay, String departureTime){
+        ArrayList<Trip> baseTrips = new ArrayList<Trip>();
+        City departureCity = cityCatalog.getCity(DepartureCity);
+        City arrivalCity = cityCatalog.getCity(ArrivalCity);
+        
+        if(departureCity ==null | arrivalCity==null){
+            throw new IllegalArgumentException("One or both of the specified cities do not exist in the catalog.");
+        }
+        for(Connection conn : departureCity.outgoingConnections){
+            Connection[] connections = new Connection[1];
+            connections[0] = conn;
+            if(conn.arrivalCity.getCityName().equals(ArrivalCity)){ // Checking that the arrival city of the connection is the same for a direct connection
+                Trip trip;
+                if(departureDay.length()>0 || departureTime.length()>0){
+                   trip = new Trip(connections,departureDay,departureTime);}
+                else{
+                    trip = new Trip(connections);
+                }
+                baseTrips.add(trip);
+            }
+            City departureCity1 = cityCatalog.getCity(conn.arrivalCity.getCityName());
+            for(Connection conn2: departureCity1.outgoingConnections){
+                Connection[] connection2 = new Connection[2];
+                connection2[0] = conn;
+                connection2[1] = conn2;
+            if(conn2.arrivalCity.getCityName().equals(ArrivalCity)){ // Checking that the arrival city of the connection is the same for a 1-stop Indirect connection
+                Trip trip;
+                if(departureDay.length()>0 || departureTime.length()>0){
+                   trip = new Trip(connection2,departureDay,departureTime);}
+                else{
+                    trip = new Trip(connection2);
+                }
+                baseTrips.add(trip);
+            }
+
+             City departureCity2 = cityCatalog.getCity(conn2.arrivalCity.getCityName());
+            for(Connection conn3: departureCity2.outgoingConnections){
+                Connection[] connection3 = new Connection[3];
+                connection3[0] = conn;
+                connection3[1] = conn2;
+                connection3[2] = conn3;
+               if(conn3.arrivalCity.getCityName().equals(ArrivalCity)){  // Checking that the arrival city of the connection is the same for a 2-stop Indirect connection
+                Trip trip;
+                if(departureDay.length()>0 || departureTime.length()>0){
+                   trip = new Trip(connection3,departureDay,departureTime);}
+                else{
+                    trip = new Trip(connection3);
+                }
+                baseTrips.add(trip);
+            }
+            }
+            }
+        }
+        return baseTrips;
+    }
+
+    public ArrayList<Trip> filterbyTrainType(ArrayList<Trip> trip, String trainType ){ // This method filters trips based on the train type provided by the user
+        ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
+        for(Trip trip1: trip){
+            boolean valid = true;
+            for(Connection conn: trip1.getConnections()){
+                if(!conn.trainType.equals(trainType)){
+                    valid = false;
+                    break;
+                }
+            }
+            if(valid){
+                filteredTrips.add(trip1);
+            }
+        }
+        
+        return filteredTrips;
+    }
+
+    public ArrayList<Trip> filterbyFirstClassTicketRate(ArrayList<Trip> trip, int upper, int lower ){ // This method filter trips based on the first class ticket rate provided by the user
+        ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
+        for(Trip trip1: trip){
+            if(trip1.getFirstClassTicketRate()<=upper & trip1.getFirstClassTicketRate()>= lower){
+                filteredTrips.add(trip1);
+            }
+        }
+        
+        return filteredTrips;
+    }
+
+    public ArrayList<Trip> filterbySecondClassTicketRate(ArrayList<Trip> trip, int upper, int lower ){ // This method filter trips based on the second class ticket rate provided by the user
+        ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
+        for(Trip trip1: trip){
+            if(trip1.getSecondClassTicketRate()<=upper & trip1.getSecondClassTicketRate()>= lower){
+                filteredTrips.add(trip1);
+            }
+        }
+        
+        return filteredTrips;
+    }
+
+    public ArrayList<Trip> filterbyDaysOfOperation(ArrayList<Trip> trip, String daysOfOperation ){ // This method filter trips based on the days of operation provided by the 
+        ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
+        ArrayList<String> daysOfOperationList = DaysOfOperationStringProcessing(daysOfOperation);
+        for(Trip trip1: trip){
+            boolean valid = true;
+             for(Connection conn: trip1.getConnections()){ // Goes through all the connections (1 to 3 connections per trip)
+                for(String day: daysOfOperationList ){ //  (1 day min to 7 days max) Goes through all the days of operatiom provided by the user and checks if the connection contains all of them in their days of operation
+                    if(!conn.daysOfOperation.contains(day)){
+                        valid = false;
+                        break;
+                    }
+                }
+                if(valid==false){break;}
+             }
+                if(valid){
+                    filteredTrips.add(trip1);
+                }
+        }
+        return filteredTrips;
     }
 
     // Helper class to contain all methods related to printing to the ✨console✨
