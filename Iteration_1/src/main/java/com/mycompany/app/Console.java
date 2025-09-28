@@ -27,6 +27,7 @@ public class Console {
     public void start() {
         this.running = true;
         // Run csv processing here
+        ConsoleFormatter.clearConsole();
         ConsoleFormatter.printHeader("Welcome to the European Rail Planning System");
 
         while (running) {
@@ -41,8 +42,33 @@ public class Console {
             int choice = scanner.nextInt();
             switch (choice) {
                 case 1:
+                    editDepartureCity();
+                    break;
                 case 2:
+                    editArrivalCity();
+                    break;
                 case 3:
+                    editDepartureTime();
+                    break;
+                case 4:
+                    editArrivalTime();
+                    break;
+                case 5:
+                    editTrainType();
+                    break;
+                case 6:
+                    editDaysOfOperation();
+                    break;
+                case 7:
+                    editSeatingClass();
+                    break;
+                case 8:
+                    editSortingOptions();
+                    break;
+                case 9:
+                    resetSearch();
+                case 0:
+                    exitConsole();
                     // ...
                     // Invalid choice
                 default:
@@ -153,6 +179,34 @@ public class Console {
         return daysofOperation1;
     }
 
+    private void editDepartureCity() {
+    }
+
+    private void editArrivalCity() {
+    }
+
+    private void editDepartureTime() {
+    }
+
+    private void editArrivalTime() {
+    }
+
+    private void editTrainType() {
+    }
+
+    private void editDaysOfOperation() {
+    }
+
+    private void editSeatingClass() {
+    }
+
+    private void editSortingOptions(){}
+
+    private void resetSearch(){}
+    
+    private void exitConsole(){}
+    
+
     // Helper class to contain all methods related to printing to the ✨console✨
     private class ConsoleFormatter {
         private static final int CONSOLE_WIDTH = 80;
@@ -173,6 +227,10 @@ public class Console {
             printBoxedLine("5. Train Type");
             printBoxedLine("6. Days of Operation");
             printBoxedLine("7. Train Class Tier");
+            printBoxedLine("8. Sorting Options");
+            printBoxedLine("9. Reset Search");
+            printBoxedLine("0. Exit");
+
             printSeperatorLine();
             printPrompt("Enter your selection: ");
         }
@@ -212,19 +270,20 @@ public class Console {
             System.out.println(BORDER_CHAR + "-".repeat(CONSOLE_WIDTH - 2) + BORDER_CHAR);
         }
 
-        private static void clearConsole(){
+        private static void clearConsole() {
             try {
                 // Windows implementation
-                if (System.getProperty("os.name").contains("Windows")){
+                if (System.getProperty("os.name").contains("Windows")) {
                     new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-                } else{
+                } else {
                     // MacOs and Linux
                     System.out.print("\033[2J\033[H");
                     System.out.flush();
                 }
             } catch (Exception e) {
                 // Fallback
-                for (int i = 0; i<50 ;i++) System.out.println();
+                for (int i = 0; i < 50; i++)
+                    System.out.println();
             }
         }
     }
