@@ -278,6 +278,22 @@ public class Console {
         return filteredTrips;
     }
 
+    public ArrayList<Trip> filterbyDepartureTime(ArrayList<Trip> trip, String DepartureDay, String DepartureTime){
+        ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
+         for(Trip trip1: trip){
+            boolean valid = true;
+             for(Connection conn: trip1.getConnections()){ // Goes through all the connections (1 to 3 connections per trip)
+                 if(!conn.daysOfOperation.contains(DepartureDay)){
+                        valid = false;
+                        break;
+                    }
+            }
+            if(!trip1.getConnections().get(0).departureTime.contains(DepartureTime)){valid = false;}
+            if(valid){filteredTrips.add(trip1);}
+        }
+        return filteredTrips;
+    }
+
     // Helper class to contain all methods related to printing to the ✨console✨
     private class ConsoleFormatter {
         private static final int CONSOLE_WIDTH = 80;
