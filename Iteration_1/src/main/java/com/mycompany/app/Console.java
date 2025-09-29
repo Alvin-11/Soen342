@@ -182,7 +182,7 @@ public class Console {
                 }
                 baseTrips.add(trip);
             }
-            City departureCity1 = cityCatalog.getCity(conn.arrivalCity.getCityName());
+            City departureCity1 = conn.arrivalCity;
             for(Connection conn2: departureCity1.outgoingConnections){
                 Connection[] connection2 = new Connection[2];
                 connection2[0] = conn;
@@ -197,7 +197,7 @@ public class Console {
                 baseTrips.add(trip);
             }
 
-             City departureCity2 = cityCatalog.getCity(conn2.arrivalCity.getCityName());
+             City departureCity2 = conn2.arrivalCity;
             for(Connection conn3: departureCity2.outgoingConnections){
                 Connection[] connection3 = new Connection[3];
                 connection3[0] = conn;
@@ -279,23 +279,15 @@ public class Console {
         return filteredTrips;
     }
 
-    public ArrayList<Trip> filterbyDepartureTime(ArrayList<Trip> trip, String DepartureDay, String DepartureTime){
+    public ArrayList<Trip> filterbyDepartureTime(ArrayList<Trip> trip){ // This method checks if the departure time and day of the first connection matches the user
         ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
          for(Trip trip1: trip){
-            boolean valid = true;
-             for(Connection conn: trip1.getConnections()){ // Goes through all the connections (1 to 3 connections per trip)
-                 if(!conn.daysOfOperation.contains(DepartureDay)){
-                        valid = false;
-                        break;
-                    }
-            }
-            if(!trip1.getConnections().get(0).departureTime.contains(DepartureTime)){valid = false;}
-            if(valid){filteredTrips.add(trip1);}
+            if(trip1.getInitialWaitTime()<=0){filteredTrips.add(trip1);}
         }
         return filteredTrips;
     }
 
-      public ArrayList<Trip> filterbyArrivalTime(ArrayList<Trip> trip, String ArrivalDay, String ArrivalTime){
+      public ArrayList<Trip> filterbyArrivalTime(ArrayList<Trip> trip, String ArrivalDay, String ArrivalTime){ // This method checks if the arrival time and day of the last connection matches the user
         ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
         ArrayList<String> daysInAWeek = new ArrayList<>(List.of("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"));  
        
@@ -303,6 +295,7 @@ public class Console {
             if(trip1.getConnections().get(trip1.getConnections().size()-1).arrivalTime.contains("(+1d)")){
                 ArrivalTime = ArrivalTime.substring(0,4);
                 ArrivalDay = daysInAWeek.get((daysInAWeek.indexOf(ArrivalDay)+7-1)%7);
+                System.out.println(ArrivalDay + " " + ArrivalTime);
             }
             boolean valid = true;
              for(Connection conn: trip1.getConnections()){ // Goes through all the connections (1 to 3 connections per trip)
