@@ -311,7 +311,7 @@ public class Console {
                         break;
                     }
             }
-            if(!trip1.getConnections().get(trip1.getConnections().size()-1).departureTime.contains(ArrivalTime)){valid = false;} // change the date to arrival time checker
+            if(!trip1.getConnections().get(trip1.getConnections().size()-1).arrivalTime.contains(ArrivalTime)){valid = false;} // change the date to arrival time checker
             if(valid){filteredTrips.add(trip1);}
         }
         return filteredTrips;
