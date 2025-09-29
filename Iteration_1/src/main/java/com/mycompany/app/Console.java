@@ -2,6 +2,7 @@ package com.mycompany.app;
 
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import com.opencsv.CSVReader;
@@ -289,6 +290,28 @@ public class Console {
                     }
             }
             if(!trip1.getConnections().get(0).departureTime.contains(DepartureTime)){valid = false;}
+            if(valid){filteredTrips.add(trip1);}
+        }
+        return filteredTrips;
+    }
+
+      public ArrayList<Trip> filterbyArrivalTime(ArrayList<Trip> trip, String ArrivalDay, String ArrivalTime){
+        ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
+        ArrayList<String> daysInAWeek = new ArrayList<>(List.of("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"));  
+       
+        for(Trip trip1: trip){
+            if(trip1.getConnections().get(trip1.getConnections().size()-1).arrivalTime.contains("(+1d)")){
+                ArrivalTime = ArrivalTime.substring(0,4);
+                ArrivalDay = daysInAWeek.get((daysInAWeek.indexOf(ArrivalDay)+7-1)%7);
+            }
+            boolean valid = true;
+             for(Connection conn: trip1.getConnections()){ // Goes through all the connections (1 to 3 connections per trip)
+                 if(!conn.daysOfOperation.contains(ArrivalDay)){
+                        valid = false;
+                        break;
+                    }
+            }
+            if(!trip1.getConnections().get(trip1.getConnections().size()-1).departureTime.contains(ArrivalTime)){valid = false;} // change the date to arrival time checker
             if(valid){filteredTrips.add(trip1);}
         }
         return filteredTrips;
