@@ -218,6 +218,7 @@ public class Console {
         return baseTrips;
     }
 
+    
     public ArrayList<Trip> filterbyTrainType(ArrayList<Trip> trip, String trainType ){ // This method filters trips based on the train type provided by the user
         ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
         for(Trip trip1: trip){
@@ -289,23 +290,8 @@ public class Console {
 
       public ArrayList<Trip> filterbyArrivalTime(ArrayList<Trip> trip, String ArrivalDay, String ArrivalTime){ // This method checks if the arrival time and day of the last connection matches the user
         ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
-        ArrayList<String> daysInAWeek = new ArrayList<>(List.of("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"));  
-       
         for(Trip trip1: trip){
-            if(trip1.getConnections().get(trip1.getConnections().size()-1).arrivalTime.contains("(+1d)")){
-                ArrivalTime = ArrivalTime.substring(0,4);
-                ArrivalDay = daysInAWeek.get((daysInAWeek.indexOf(ArrivalDay)+7-1)%7);
-                System.out.println(ArrivalDay + " " + ArrivalTime);
-            }
-            boolean valid = true;
-             for(Connection conn: trip1.getConnections()){ // Goes through all the connections (1 to 3 connections per trip)
-                 if(!conn.daysOfOperation.contains(ArrivalDay)){
-                        valid = false;
-                        break;
-                    }
-            }
-            if(!trip1.getConnections().get(trip1.getConnections().size()-1).arrivalTime.contains(ArrivalTime)){valid = false;} // change the date to arrival time checker
-            if(valid){filteredTrips.add(trip1);}
+            if(trip1.getArrivalDate().contains(ArrivalDay) & trip1.getArrivalDate().contains(ArrivalTime)){filteredTrips.add(trip1);}
         }
         return filteredTrips;
     }
