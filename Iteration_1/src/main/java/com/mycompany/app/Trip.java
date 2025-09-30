@@ -184,6 +184,10 @@ public class Trip {
         return minutesToElapsedTime(changeWaitTime);
     }
 
+    public ArrayList<Connection> getConnections() {
+        return connections;
+    }
+
     private int timeToMinutes(String time) {
         if (time.length() != 5 || time.charAt(2) != ':') { // make sure it is well formatted (hh:mm)
             throw new IllegalArgumentException("The provided time does not follow the format hh:mm.");
