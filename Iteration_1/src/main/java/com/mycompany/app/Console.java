@@ -31,7 +31,7 @@ public class Console {
         ConsoleFormatter.printHeader("Welcome to the European Rail Planning System");
 
         while (running) {
-            ConsoleFormatter.displayMenu();
+            ConsoleFormatter.displayMenu(currentSearch);
             handleUserInput();
         }
     }
@@ -39,50 +39,68 @@ public class Console {
     // Route user choice from main menu to the proper handler class/method
     private void handleUserInput() {
         try {
-            int choice = scanner.nextInt();
+            String choice = scanner.nextLine().trim().toLowerCase();
+
             switch (choice) {
-                case 1:
+                case "1":
                     editDepartureCity();
                     break;
-                case 2:
+                case "2":
                     editArrivalCity();
                     break;
-                case 3:
+                case "3":
                     editDepartureTime();
                     break;
-                case 4:
+                case "4":
                     editArrivalTime();
                     break;
-                case 5:
+                case "5":
                     editTrainType();
                     break;
-                case 6:
+                case "6":
                     editDaysOfOperation();
                     break;
-                case 7:
+                case "7":
                     editSeatingClass();
                     break;
-                case 8:
+                case "8":
                     editSortingOptions();
                     break;
-                case 9:
+                case "9":
                     resetSearch();
-                case 0:
+                    break;
+                case "0":
                     exitConsole();
-                    // ...
-                    // Invalid choice
+                    break;
+                case "s":
+                case "search":
+                    runSearch();
+                    break;
+                // Invalid choice
                 default:
                     ConsoleFormatter.printSeperatorLine();
                     ConsoleFormatter.printBoxedLine("Please select a valid option");
+                    ConsoleFormatter.printPrompt("Press Enter to continue...");
+                    scanner.nextLine();
             }
-            // Non int
         } catch (Exception e) {
             ConsoleFormatter.printSeperatorLine();
-            ConsoleFormatter.printBoxedLine("Please enter a valid number");
-
-            // Clear the current input
+            ConsoleFormatter.printBoxedLine("An error occurred. Please try again.");
+            ConsoleFormatter.printPrompt("Press Enter to continue...");
             scanner.nextLine();
         }
+    }
+
+    public void runSearch() {
+        ConsoleFormatter.clearConsole();
+        ConsoleFormatter.printHeader("Search Results");
+
+        // TODO: Implement actual search logic here
+
+        ConsoleFormatter.printSeperatorLine();
+        ConsoleFormatter.printPrompt("Press Enter to return to main menu...");
+        scanner.nextLine();
+        ConsoleFormatter.clearConsole();
     }
 
     public void addFilePath(String filePath) {
@@ -185,32 +203,277 @@ public class Console {
     }
 
     private void editDepartureCity() {
+        ConsoleFormatter.clearConsole();
+        ConsoleFormatter.printCenteredLine("Current departure city: " + this.currentSearch.getDepartureCity());
+        ConsoleFormatter.printSeperatorLine();
+        ConsoleFormatter.printPrompt("Enter new departure city (or press Enter to skip): ");
+
+        try {
+            String newDepartureCity = scanner.nextLine().trim();
+            this.currentSearch.setDepartureCity(newDepartureCity);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+
+        ConsoleFormatter.clearConsole();
     }
 
     private void editArrivalCity() {
+        ConsoleFormatter.clearConsole();
+        ConsoleFormatter.printCenteredLine("Current arrival city: " + this.currentSearch.getArrivalCity());
+        ConsoleFormatter.printSeperatorLine();
+        ConsoleFormatter.printPrompt("Enter new arrival city (or press Enter to skip): ");
+
+        try {
+            String newArrivalCity = scanner.nextLine().trim();
+            this.currentSearch.setArrivalCity(newArrivalCity);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+
+        ConsoleFormatter.clearConsole();
     }
 
     private void editDepartureTime() {
+        ConsoleFormatter.clearConsole();
+        ConsoleFormatter.printCenteredLine("Current departure time: " + this.currentSearch.getDepartureTime());
+        ConsoleFormatter.printSeperatorLine();
+        ConsoleFormatter.printBoxedLine("Format: HH:MM (24-hour format, e.g., 14:30)");
+        ConsoleFormatter.printPrompt("Enter new departure time: ");
+
+        try {
+            String newDepartureTime = scanner.nextLine().trim();
+            if (isValidTimeFormat(newDepartureTime) || newDepartureTime.isEmpty()) {
+                this.currentSearch.setDepartureTime(newDepartureTime);
+            } else {
+                ConsoleFormatter.printBoxedLine("Invalid time format. Please use HH:MM format.");
+                ConsoleFormatter.printPrompt("Press Enter to continue...");
+                scanner.nextLine();
+            }
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+
+        ConsoleFormatter.clearConsole();
     }
 
     private void editArrivalTime() {
+        ConsoleFormatter.clearConsole();
+        ConsoleFormatter.printCenteredLine("Current arrival time: " + this.currentSearch.getArrivalTime());
+        ConsoleFormatter.printSeperatorLine();
+        ConsoleFormatter.printBoxedLine("Format: HH:MM (24-hour format, e.g., 14:30)");
+        ConsoleFormatter.printPrompt("Enter new arrival time: ");
+
+        try {
+            String newArrivalTime = scanner.nextLine().trim();
+            if (isValidTimeFormat(newArrivalTime) || newArrivalTime.isEmpty()) {
+                this.currentSearch.setArrivalTime(newArrivalTime);
+            } else {
+                ConsoleFormatter.printBoxedLine("Invalid time format. Please use HH:MM format.");
+                ConsoleFormatter.printPrompt("Press Enter to continue...");
+                scanner.nextLine();
+            }
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+
+        ConsoleFormatter.clearConsole();
     }
 
     private void editTrainType() {
+        ConsoleFormatter.clearConsole();
+        ConsoleFormatter.printCenteredLine("Current train type: " + this.currentSearch.getTrainType());
+        ConsoleFormatter.printSeperatorLine();
+        ConsoleFormatter.printPrompt("Enter new train type (or press Enter to skip): ");
+
+        try {
+            String newTrainType = scanner.nextLine().trim();
+            this.currentSearch.setTrainType(newTrainType);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+
+        ConsoleFormatter.clearConsole();
     }
 
     private void editDaysOfOperation() {
+        ConsoleFormatter.clearConsole();
+        ConsoleFormatter.printCenteredLine("Current days of operation: " + this.currentSearch.getDaysOfOperation());
+        ConsoleFormatter.printSeperatorLine();
+        ConsoleFormatter.printBoxedLine("Examples:");
+        ConsoleFormatter.printBoxedLine("- Daily");
+        ConsoleFormatter.printBoxedLine("- Mon,Wed,Fri");
+        ConsoleFormatter.printBoxedLine("- Mon-Fri");
+        ConsoleFormatter.printBoxedLine("- Sat,Sun");
+        ConsoleFormatter.printSeperatorLine();
+        ConsoleFormatter.printPrompt("Enter days of operation (or press Enter to skip): ");
+
+        try {
+            String newDaysOfOperation = scanner.nextLine().trim();
+            this.currentSearch.setDaysOfOperation(newDaysOfOperation);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+
+        ConsoleFormatter.clearConsole();
     }
 
     private void editSeatingClass() {
+        ConsoleFormatter.clearConsole();
+        ConsoleFormatter.printCenteredLine("Current seating class: " + this.currentSearch.getSeatingClass());
+        ConsoleFormatter.printSeperatorLine();
+        ConsoleFormatter.printBoxedLine("Available seating classes:");
+        ConsoleFormatter.printBoxedLine("1. First Class");
+        ConsoleFormatter.printBoxedLine("2. Second Class");
+        ConsoleFormatter.printSeperatorLine();
+        ConsoleFormatter.printPrompt("Enter your choice or press Enter to skip: ");
+
+        try {
+            String input = scanner.nextLine().trim();
+            String seatingClass = "";
+
+            switch (input) {
+                case "1":
+                    seatingClass = "First Class";
+                    break;
+                case "2":
+                    seatingClass = "Second Class";
+                    break;
+                case "":
+                    seatingClass = "";
+                    break;
+                default:
+                    ConsoleFormatter.printBoxedLine("Invalid choice. No changes made.");
+                    ConsoleFormatter.printPrompt("Press Enter to continue...");
+                    scanner.nextLine();
+                    return;
+            }
+
+            this.currentSearch.setSeatingClass(seatingClass);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+
+        ConsoleFormatter.clearConsole();
     }
 
-    private void editSortingOptions(){}
+    private void editSortingOptions() {
+        ConsoleFormatter.clearConsole();
+        ConsoleFormatter.printCenteredLine("Current sort by: " + this.currentSearch.getSortBy());
+        ConsoleFormatter.printCenteredLine("Current order: " + this.currentSearch.getOrder());
+        ConsoleFormatter.printSeperatorLine();
+        ConsoleFormatter.printBoxedLine("Sort by options:");
+        ConsoleFormatter.printBoxedLine("1. Departure Time");
+        ConsoleFormatter.printBoxedLine("2. Arrival Time");
+        ConsoleFormatter.printBoxedLine("3. Price");
+        ConsoleFormatter.printBoxedLine("4. Duration");
+        ConsoleFormatter.printSeperatorLine();
+        ConsoleFormatter.printPrompt("Enter sort by choice (1-4) or press Enter to skip: ");
 
-    private void resetSearch(){}
-    
-    private void exitConsole(){}
-    
+        try {
+            String sortInput = scanner.nextLine().trim();
+            String sortBy = "";
+
+            switch (sortInput) {
+                case "1":
+                    sortBy = "Departure Time";
+                    break;
+                case "2":
+                    sortBy = "Arrival Time";
+                    break;
+                case "3":
+                    sortBy = "Price";
+                    break;
+                case "4":
+                    sortBy = "Duration";
+                    break;
+                case "":
+                    return; // Skip if empty
+                default:
+                    ConsoleFormatter.printBoxedLine("Invalid choice. No changes made.");
+                    ConsoleFormatter.printPrompt("Press Enter to continue...");
+                    scanner.nextLine();
+                    return;
+            }
+
+            this.currentSearch.setSortBy(sortBy);
+
+            // Ask for order
+            ConsoleFormatter.printSeperatorLine();
+            ConsoleFormatter.printBoxedLine("Sort order:");
+            ConsoleFormatter.printBoxedLine("1. Ascending");
+            ConsoleFormatter.printBoxedLine("2. Descending");
+            ConsoleFormatter.printPrompt("Enter order choice (1-2): ");
+
+            String orderInput = scanner.nextLine().trim();
+            String order = "";
+
+            switch (orderInput) {
+                case "1":
+                    order = "Ascending";
+                    break;
+                case "2":
+                    order = "Descending";
+                    break;
+                default:
+                    order = "Ascending"; // Default
+                    break;
+            }
+
+            this.currentSearch.setOrder(order);
+
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+
+        ConsoleFormatter.clearConsole();
+    }
+
+    private void resetSearch() {
+        this.currentSearch = new Search();
+
+        ConsoleFormatter.clearConsole();
+        ConsoleFormatter.printCenteredLine("Current search has been reset.");
+    }
+
+    private void exitConsole() {
+        ConsoleFormatter.clearConsole();
+        ConsoleFormatter.printBorderLine();
+        ConsoleFormatter.printCenteredLine("Thank you for using the European Rail Planning System!");
+        ConsoleFormatter.printCenteredLine("We hope you have a wonderful journey!");
+        ConsoleFormatter.printBorderLine();
+
+        scanner.close();
+        this.running = false;
+
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        ConsoleFormatter.clearConsole();
+    }
+
+    private boolean isValidTimeFormat(String time) {
+        if (time == null || time.trim().isEmpty()) {
+            return true; // Allow empty times
+        }
+
+        try {
+            String[] parts = time.split(":");
+            if (parts.length != 2) {
+                return false;
+            }
+
+            int hours = Integer.parseInt(parts[0]);
+            int minutes = Integer.parseInt(parts[1]);
+
+            return hours >= 0 && hours <= 23 && minutes >= 0 && minutes <= 59;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 
     // Helper class to contain all methods related to printing to the ✨console✨
     private class ConsoleFormatter {
@@ -221,23 +484,64 @@ public class Console {
         private ConsoleFormatter() {
         }
 
-        private static void displayMenu() {
+        private static void displayMenu(Search currentSearch) {
             printSeperatorLine();
             printCenteredLine("Search Filters");
             printSeperatorLine();
-            printBoxedLine("1. Departure City");
-            printBoxedLine("2. Arrival City");
-            printBoxedLine("3. Departure Time");
-            printBoxedLine("4. Arrival Time");
-            printBoxedLine("5. Train Type");
-            printBoxedLine("6. Days of Operation");
-            printBoxedLine("7. Train Class Tier");
-            printBoxedLine("8. Sorting Options");
+            printMenuItemWithValue("1. Departure City", currentSearch.getDepartureCity());
+            printMenuItemWithValue("2. Arrival City", currentSearch.getArrivalCity());
+            printMenuItemWithValue("3. Departure Time", currentSearch.getDepartureTime());
+            printMenuItemWithValue("4. Arrival Time", currentSearch.getArrivalTime());
+            printMenuItemWithValue("5. Train Type", currentSearch.getTrainType());
+            printMenuItemWithValue("6. Days of Operation", currentSearch.getDaysOfOperation());
+            printMenuItemWithValue("7. Seating Class Tier", currentSearch.getSeatingClass());
+            printMenuItemWithValue("8. Sorting Options", formatSortingInfo(currentSearch));
             printBoxedLine("9. Reset Search");
             printBoxedLine("0. Exit");
-
+            printSeperatorLine();
+            printBoxedLine("S. Run Search");
             printSeperatorLine();
             printPrompt("Enter your selection: ");
+        }
+
+        private static String formatSortingInfo(Search currentSearch) {
+            String sortBy = currentSearch.getSortBy();
+            String order = currentSearch.getOrder();
+
+            if ((sortBy == null || sortBy.trim().isEmpty()) &&
+                    (order == null || order.trim().isEmpty())) {
+                return "Not set";
+            } else if (sortBy != null && !sortBy.trim().isEmpty() &&
+                    order != null && !order.trim().isEmpty()) {
+                return sortBy + " (" + order + ")";
+            } else if (sortBy != null && !sortBy.trim().isEmpty()) {
+                return sortBy;
+            } else {
+                return order;
+            }
+        }
+
+        private static void printMenuItemWithValue(String menuItem, String currentValue) {
+            int contentWidth = CONSOLE_WIDTH - 4; // Account for borders and padding
+
+            // Handle empty or null values
+            String displayValue = (currentValue == null || currentValue.trim().isEmpty()) ? "Not set" : currentValue;
+
+            // Calculate available space for the menu item text
+            int valueLength = displayValue.length();
+            int availableSpace = contentWidth - valueLength - 1; // -1 for space between item and value
+
+            // Truncate menu item if necessary
+            String truncatedMenuItem = menuItem;
+            if (menuItem.length() > availableSpace) {
+                truncatedMenuItem = menuItem.substring(0, availableSpace - 3) + "...";
+            }
+
+            // Calculate padding between menu item and value
+            int paddingLength = contentWidth - truncatedMenuItem.length() - valueLength;
+            String padding = PADDING_CHAR.repeat(Math.max(1, paddingLength));
+
+            System.out.println(BORDER_CHAR + " " + truncatedMenuItem + padding + displayValue + " " + BORDER_CHAR);
         }
 
         private static void printPrompt(String prompt) {
@@ -291,5 +595,6 @@ public class Console {
                     System.out.println();
             }
         }
+
     }
 }

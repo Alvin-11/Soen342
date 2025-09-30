@@ -1,8 +1,8 @@
 package com.mycompany.app;
 
 public class Search {
-    private City departureCity;
-    private City arrivalCity;
+    private String departureCity;
+    private String arrivalCity;
     private String departureDay;
     private String departureTime;
     private String arrivalDay;
@@ -11,6 +11,25 @@ public class Search {
     private String daysOfOperation;
     private Double minCost;
     private Double maxCost;
+
+    private String seatingClass;
+    private String sortBy;
+    private String Order;
+
+    public Search() {
+        this.departureCity = "";
+        this.arrivalCity = "";
+        this.departureDay = "";
+        this.departureTime = "";
+        this.arrivalDay = "";
+        this.arrivalTime = "";
+        this.trainType = "";
+        this.daysOfOperation = "";
+        this.seatingClass = "";
+        this.sortBy = "";
+        this.Order = "";
+    }
+
     public Double getMinCost() {
         return minCost;
     }
@@ -27,26 +46,19 @@ public class Search {
         this.maxCost = maxCost;
     }
 
-    private String seatingClass;
-    private String sortBy;
-    private String Order;
-
-    public Search() {
-    }
-
-    public City getDepartureCity() {
+    public String getDepartureCity() {
         return departureCity;
     }
 
-    public void setDepartureCity(City departureCity) {
+    public void setDepartureCity(String departureCity) {
         this.departureCity = departureCity;
     }
 
-    public City getArrivalCity() {
+    public String getArrivalCity() {
         return arrivalCity;
     }
 
-    public void setArrivalCity(City arrivalCity) {
+    public void setArrivalCity(String arrivalCity) {
         this.arrivalCity = arrivalCity;
     }
 
