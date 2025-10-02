@@ -67,13 +67,17 @@ public class Console {
                     editSeatingClass();
                     break;
                 case "8":
-                    editSortingOptions();
+                    editPriceOptions();
                     break;
                 case "9":
-                    resetSearch();
+                    editSortingOptions();
                     break;
+
                 case "0":
                     exitConsole();
+                    break;
+                case "r":
+                    resetSearch();
                     break;
                 case "s":
                 case "search":
@@ -204,138 +208,184 @@ public class Console {
         }
         return daysofOperation1;
     }
-    
-    // This method essentials loops through the cities and their connections to find all possible trips from 0 stop t0 2 stop that match the search criteria for departure city and arrival city
-    public ArrayList<Trip> filterbyDepartureCityAndArrivalCity(String DepartureCity, String ArrivalCity, String departureDay, String departureTime){
+
+    // This method essentials loops through the cities and their connections to find
+    // all possible trips from 0 stop t0 2 stop that match the search criteria for
+    // departure city and arrival city
+    public ArrayList<Trip> filterbyDepartureCityAndArrivalCity(String DepartureCity, String ArrivalCity,
+            String departureDay, String departureTime) {
         ArrayList<Trip> baseTrips = new ArrayList<Trip>();
         City departureCity = cityCatalog.getCity(DepartureCity);
         City arrivalCity = cityCatalog.getCity(ArrivalCity);
-        
-        if(departureCity ==null | arrivalCity==null){
+
+        if (departureCity == null | arrivalCity == null) {
             throw new IllegalArgumentException("One or both of the specified cities do not exist in the catalog.");
         }
-        for(Connection conn : departureCity.outgoingConnections){
+        for (Connection conn : departureCity.outgoingConnections) {
             Connection[] connections = new Connection[1];
             connections[0] = conn;
-            if(conn.arrivalCity.getCityName().equals(ArrivalCity)){ // Checking that the arrival city of the connection is the same for a direct connection
+            if (conn.arrivalCity.getCityName().equals(ArrivalCity)) { // Checking that the arrival city of the
+                                                                      // connection is the same for a direct connection
                 Trip trip;
-                if(departureDay.length()>0 || departureTime.length()>0){
-                   trip = new Trip(connections,departureDay,departureTime);}
-                else{
+                if (departureDay.length() > 0 || departureTime.length() > 0) {
+                    trip = new Trip(connections, departureDay, departureTime);
+                } else {
                     trip = new Trip(connections);
                 }
                 baseTrips.add(trip);
             }
             City departureCity1 = conn.arrivalCity;
-            for(Connection conn2: departureCity1.outgoingConnections){
+            for (Connection conn2 : departureCity1.outgoingConnections) {
                 Connection[] connection2 = new Connection[2];
                 connection2[0] = conn;
                 connection2[1] = conn2;
-            if(conn2.arrivalCity.getCityName().equals(ArrivalCity)){ // Checking that the arrival city of the connection is the same for a 1-stop Indirect connection
-                Trip trip;
-                if(departureDay.length()>0 || departureTime.length()>0){
-                   trip = new Trip(connection2,departureDay,departureTime);}
-                else{
-                    trip = new Trip(connection2);
+                if (conn2.arrivalCity.getCityName().equals(ArrivalCity)) { // Checking that the arrival city of the
+                                                                           // connection is the same for a 1-stop
+                                                                           // Indirect connection
+                    Trip trip;
+                    if (departureDay.length() > 0 || departureTime.length() > 0) {
+                        trip = new Trip(connection2, departureDay, departureTime);
+                    } else {
+                        trip = new Trip(connection2);
+                    }
+                    baseTrips.add(trip);
                 }
-                baseTrips.add(trip);
-            }
 
-             City departureCity2 = conn2.arrivalCity;
-            for(Connection conn3: departureCity2.outgoingConnections){
-                Connection[] connection3 = new Connection[3];
-                connection3[0] = conn;
-                connection3[1] = conn2;
-                connection3[2] = conn3;
-               if(conn3.arrivalCity.getCityName().equals(ArrivalCity)){  // Checking that the arrival city of the connection is the same for a 2-stop Indirect connection
-                Trip trip;
-                if(departureDay.length()>0 || departureTime.length()>0){
-                   trip = new Trip(connection3,departureDay,departureTime);}
-                else{
-                    trip = new Trip(connection3);
+                City departureCity2 = conn2.arrivalCity;
+                for (Connection conn3 : departureCity2.outgoingConnections) {
+                    Connection[] connection3 = new Connection[3];
+                    connection3[0] = conn;
+                    connection3[1] = conn2;
+                    connection3[2] = conn3;
+                    if (conn3.arrivalCity.getCityName().equals(ArrivalCity)) { // Checking that the arrival city of the
+                                                                               // connection is the same for a 2-stop
+                                                                               // Indirect connection
+                        Trip trip;
+                        if (departureDay.length() > 0 || departureTime.length() > 0) {
+                            trip = new Trip(connection3, departureDay, departureTime);
+                        } else {
+                            trip = new Trip(connection3);
+                        }
+                        baseTrips.add(trip);
+                    }
                 }
-                baseTrips.add(trip);
-            }
-            }
             }
         }
         return baseTrips;
     }
 
-    
-    public ArrayList<Trip> filterbyTrainType(ArrayList<Trip> trip, String trainType ){ // This method filters trips based on the train type provided by the user
+    public ArrayList<Trip> filterbyTrainType(ArrayList<Trip> trip, String trainType) { // This method filters trips
+                                                                                       // based on the train type
+                                                                                       // provided by the user
         ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
-        for(Trip trip1: trip){
+        for (Trip trip1 : trip) {
             boolean valid = true;
-            for(Connection conn: trip1.getConnections()){
-                if(!conn.trainType.equals(trainType)){
+            for (Connection conn : trip1.getConnections()) {
+                if (!conn.trainType.equals(trainType)) {
                     valid = false;
                     break;
                 }
             }
-            if(valid){
+            if (valid) {
                 filteredTrips.add(trip1);
             }
         }
-        
+
         return filteredTrips;
     }
 
-    public ArrayList<Trip> filterbyFirstClassTicketRate(ArrayList<Trip> trip, int upper, int lower ){ // This method filter trips based on the first class ticket rate provided by the user
+    public ArrayList<Trip> filterbyFirstClassTicketRate(ArrayList<Trip> trip, int upper, int lower) { // This method
+                                                                                                      // filter trips
+                                                                                                      // based on the
+                                                                                                      // first class
+                                                                                                      // ticket rate
+                                                                                                      // provided by the
+                                                                                                      // user
         ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
-        for(Trip trip1: trip){
-            if(trip1.getFirstClassTicketRate()<=upper & trip1.getFirstClassTicketRate()>= lower){
+        for (Trip trip1 : trip) {
+            if (trip1.getFirstClassTicketRate() <= upper & trip1.getFirstClassTicketRate() >= lower) {
                 filteredTrips.add(trip1);
             }
         }
-        
+
         return filteredTrips;
     }
 
-    public ArrayList<Trip> filterbySecondClassTicketRate(ArrayList<Trip> trip, int upper, int lower ){ // This method filter trips based on the second class ticket rate provided by the user
+    public ArrayList<Trip> filterbySecondClassTicketRate(ArrayList<Trip> trip, int upper, int lower) { // This method
+                                                                                                       // filter trips
+                                                                                                       // based on the
+                                                                                                       // second class
+                                                                                                       // ticket rate
+                                                                                                       // provided by
+                                                                                                       // the user
         ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
-        for(Trip trip1: trip){
-            if(trip1.getSecondClassTicketRate()<=upper & trip1.getSecondClassTicketRate()>= lower){
+        for (Trip trip1 : trip) {
+            if (trip1.getSecondClassTicketRate() <= upper & trip1.getSecondClassTicketRate() >= lower) {
                 filteredTrips.add(trip1);
             }
         }
-        
+
         return filteredTrips;
     }
 
-    public ArrayList<Trip> filterbyDaysOfOperation(ArrayList<Trip> trip, String daysOfOperation ){ // This method filter trips based on the days of operation provided by the 
+    public ArrayList<Trip> filterbyDaysOfOperation(ArrayList<Trip> trip, String daysOfOperation) { // This method filter
+                                                                                                   // trips based on the
+                                                                                                   // days of operation
+                                                                                                   // provided by the
         ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
         ArrayList<String> daysOfOperationList = DaysOfOperationStringProcessing(daysOfOperation);
-        for(Trip trip1: trip){
+        for (Trip trip1 : trip) {
             boolean valid = true;
-             for(Connection conn: trip1.getConnections()){ // Goes through all the connections (1 to 3 connections per trip)
-                for(String day: daysOfOperationList ){ //  (1 day min to 7 days max) Goes through all the days of operatiom provided by the user and checks if the connection contains all of them in their days of operation
-                    if(!conn.daysOfOperation.contains(day)){
+            for (Connection conn : trip1.getConnections()) { // Goes through all the connections (1 to 3 connections per
+                                                             // trip)
+                for (String day : daysOfOperationList) { // (1 day min to 7 days max) Goes through all the days of
+                                                         // operatiom provided by the user and checks if the connection
+                                                         // contains all of them in their days of operation
+                    if (!conn.daysOfOperation.contains(day)) {
                         valid = false;
                         break;
                     }
                 }
-                if(valid==false){break;}
-             }
-                if(valid){
-                    filteredTrips.add(trip1);
+                if (valid == false) {
+                    break;
                 }
+            }
+            if (valid) {
+                filteredTrips.add(trip1);
+            }
         }
         return filteredTrips;
     }
 
-    public ArrayList<Trip> filterbyDepartureTime(ArrayList<Trip> trip){ // This method checks if the departure time and day of the first connection matches the user
+    public ArrayList<Trip> filterbyDepartureTime(ArrayList<Trip> trip) { // This method checks if the departure time and
+                                                                         // day of the first connection matches the user
         ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
-         for(Trip trip1: trip){
-            if(trip1.getInitialWaitTime()<=0){filteredTrips.add(trip1);}
+        for (Trip trip1 : trip) {
+            if (trip1.getInitialWaitTime() <= 0) {
+                filteredTrips.add(trip1);
+            }
         }
         return filteredTrips;
     }
 
-      public ArrayList<Trip> filterbyArrivalTime(ArrayList<Trip> trip, String ArrivalDay, String ArrivalTime){ // This method checks if the arrival time and day of the last connection matches the user
+    public ArrayList<Trip> filterbyArrivalTime(ArrayList<Trip> trip, String ArrivalDay, String ArrivalTime) { // This
+                                                                                                              // method
+                                                                                                              // checks
+                                                                                                              // if the
+                                                                                                              // arrival
+                                                                                                              // time
+                                                                                                              // and day
+                                                                                                              // of the
+                                                                                                              // last
+                                                                                                              // connection
+                                                                                                              // matches
+                                                                                                              // the
+                                                                                                              // user
         ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
-        for(Trip trip1: trip){
-            if(trip1.getArrivalDate().contains(ArrivalDay) & trip1.getArrivalDate().contains(ArrivalTime)){filteredTrips.add(trip1);}
+        for (Trip trip1 : trip) {
+            if (trip1.getArrivalDate().contains(ArrivalDay) & trip1.getArrivalDate().contains(ArrivalTime)) {
+                filteredTrips.add(trip1);
+            }
         }
         return filteredTrips;
     }
@@ -438,19 +488,28 @@ public class Console {
         ConsoleFormatter.clearConsole();
         ConsoleFormatter.printCenteredLine("Current days of operation: " + this.currentSearch.getDaysOfOperation());
         ConsoleFormatter.printSeperatorLine();
-        ConsoleFormatter.printBoxedLine("Examples:");
+        ConsoleFormatter.printBoxedLine("Valid formats:");
         ConsoleFormatter.printBoxedLine("- Daily");
-        ConsoleFormatter.printBoxedLine("- Mon,Wed,Fri");
-        ConsoleFormatter.printBoxedLine("- Mon-Fri");
-        ConsoleFormatter.printBoxedLine("- Sat,Sun");
+        ConsoleFormatter.printBoxedLine("- Single range: Mon-Fri, Saturday-Sunday");
+        ConsoleFormatter.printBoxedLine("- Comma-separated: Mon,Wed,Fri or Monday,Wednesday,Friday");
         ConsoleFormatter.printSeperatorLine();
         ConsoleFormatter.printPrompt("Enter days of operation (or press Enter to skip): ");
 
         try {
             String newDaysOfOperation = scanner.nextLine().trim();
-            this.currentSearch.setDaysOfOperation(newDaysOfOperation);
+
+            if (isValidDaysOfOperationFormat(newDaysOfOperation)) {
+                this.currentSearch.setDaysOfOperation(newDaysOfOperation);
+            } else {
+                ConsoleFormatter.printBoxedLine(
+                        "Invalid format. Please use Daily, a single range (Mon-Fri), or comma-separated days (Mon,Wed,Fri).");
+                ConsoleFormatter.printPrompt("Press Enter to continue...");
+                scanner.nextLine();
+            }
         } catch (Exception e) {
-            System.err.println(e);
+            ConsoleFormatter.printBoxedLine("An error occurred while processing your input.");
+            ConsoleFormatter.printPrompt("Press Enter to continue...");
+            scanner.nextLine();
         }
 
         ConsoleFormatter.clearConsole();
@@ -492,6 +551,87 @@ public class Console {
             System.err.println(e);
         }
 
+        ConsoleFormatter.clearConsole();
+    }
+
+    private void editPriceOptions() {
+        ConsoleFormatter.clearConsole();
+        ConsoleFormatter.printCenteredLine("Current price options: " + ConsoleFormatter.formatPriceInfo(currentSearch));
+        ConsoleFormatter.printSeperatorLine();
+        ConsoleFormatter.printBoxedLine("Modify which bound:");
+        ConsoleFormatter.printBoxedLine("1. Minimum Price");
+        ConsoleFormatter.printBoxedLine("2. Maximum Price");
+        ConsoleFormatter.printSeperatorLine();
+        ConsoleFormatter.printPrompt("Enter your choice or press Enter to skip: ");
+
+        try {
+            String input = scanner.nextLine().trim();
+
+            switch (input) {
+                case "1":
+                    editMinPrice();
+                    break;
+                case "2":
+                    editMaxPrice();
+                    break;
+                case "":
+                default:
+                    ConsoleFormatter.printBoxedLine("Invalid choice. No changes made.");
+                    ConsoleFormatter.printPrompt("Press Enter to continue...");
+                    scanner.nextLine();
+                    return;
+            }
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+
+    }
+
+    private void editMinPrice() {
+        ConsoleFormatter.printSeperatorLine();
+        ConsoleFormatter.printPrompt("Enter new minimum price (or Enter to skip): ");
+
+        String input = scanner.nextLine();
+        try {
+            Double newMin = Double.parseDouble(input);
+
+            Double currentMax = currentSearch.getMaxCost();
+            if (currentMax != null && newMin > currentMax) {
+                ConsoleFormatter.printBoxedLine("Invalid choice. No changes made.");
+                ConsoleFormatter.printPrompt("Press Enter to continue...");
+                scanner.nextLine();
+                return;
+            }
+            currentSearch.setMinCost(newMin);
+        } catch (Exception e) {
+            // Empty
+            currentSearch.setMinCost(null);
+        }
+        ConsoleFormatter.clearConsole();
+
+    }
+
+    private void editMaxPrice() {
+        ConsoleFormatter.printSeperatorLine();
+        ConsoleFormatter.printPrompt("Enter new maximum price (or Enter to skip): ");
+
+        String input = scanner.nextLine();
+        try {
+            Double newMax = Double.parseDouble(input);
+
+            Double currentMin = currentSearch.getMinCost();
+            if (currentMin != null && newMax < currentMin) {
+                ConsoleFormatter.printBoxedLine("Invalid choice. No changes made.");
+                ConsoleFormatter.printPrompt("Press Enter to continue...");
+                scanner.nextLine();
+                return;
+            }
+            currentSearch.setMaxCost(newMax);
+
+        } catch (Exception e) {
+            // Empty
+            currentSearch.setMaxCost(null);
+        }
         ConsoleFormatter.clearConsole();
     }
 
@@ -613,7 +753,77 @@ public class Console {
         }
     }
 
-    // Helper class to contain all methods related to printing to the ✨console✨
+    private boolean isValidDaysOfOperationFormat(String daysOfOperation) {
+        if (daysOfOperation == null || daysOfOperation.trim().isEmpty()) {
+            return true; // Allow empty input
+        }
+
+        String input = daysOfOperation.trim();
+
+        // Check for "Daily" (case-insensitive)
+        if (input.equalsIgnoreCase("Daily")) {
+            return true;
+        }
+
+        String[] validDaysShort = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+        String[] validDaysFull = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+
+        // Check if it's a single range (contains exactly one hyphen)
+        if (input.contains("-")) {
+            // Must be exactly one range, no commas allowed
+            if (input.contains(",")) {
+                return false; // No combination of ranges and comma-separated days
+            }
+
+            String[] rangeParts = input.split("-");
+            if (rangeParts.length != 2) {
+                return false; // Invalid range format
+            }
+
+            String startDay = rangeParts[0].trim();
+            String endDay = rangeParts[1].trim();
+
+            // Validate start and end days
+            return isValidDay(startDay, validDaysShort, validDaysFull) &&
+                    isValidDay(endDay, validDaysShort, validDaysFull);
+        }
+
+        // Check if it's comma-separated days (no hyphens allowed)
+        if (input.contains(",")) {
+            String[] parts = input.split(",");
+
+            // Validate each individual day
+            for (String part : parts) {
+                part = part.trim();
+                if (!isValidDay(part, validDaysShort, validDaysFull)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        // Single day
+        return isValidDay(input, validDaysShort, validDaysFull);
+    }
+
+    private boolean isValidDay(String day, String[] validDaysShort, String[] validDaysFull) {
+        // Check against short form
+        for (String validDay : validDaysShort) {
+            if (day.equalsIgnoreCase(validDay)) {
+                return true;
+            }
+        }
+
+        // Check against full form
+        for (String validDay : validDaysFull) {
+            if (day.equalsIgnoreCase(validDay)) {
+                return true;
+            }
+        }
+
+        return false;
+    } // Helper class to contain all methods related to printing to the ✨console✨
+
     private class ConsoleFormatter {
         private static final int CONSOLE_WIDTH = 80;
         private static final String BORDER_CHAR = "█";
@@ -633,13 +843,42 @@ public class Console {
             printMenuItemWithValue("5. Train Type", currentSearch.getTrainType());
             printMenuItemWithValue("6. Days of Operation", currentSearch.getDaysOfOperation());
             printMenuItemWithValue("7. Seating Class Tier", currentSearch.getSeatingClass());
-            printMenuItemWithValue("8. Sorting Options", formatSortingInfo(currentSearch));
-            printBoxedLine("9. Reset Search");
-            printBoxedLine("0. Exit");
+            printMenuItemWithValue("8. Min/Max Price", formatPriceInfo(currentSearch));
+            printMenuItemWithValue("9. Sorting Options", formatSortingInfo(currentSearch));
             printSeperatorLine();
+            printBoxedLine("0. Exit");
+            printBoxedLine("R. Reset Search");
             printBoxedLine("S. Run Search");
             printSeperatorLine();
             printPrompt("Enter your selection: ");
+        }
+
+        private static String formatPriceInfo(Search currentSearch) {
+            Double minPrice = currentSearch.getMinCost();
+            Double maxPrice = currentSearch.getMaxCost();
+
+            if (minPrice == null && maxPrice == null)
+                return "Not set";
+            else if (minPrice != null && maxPrice == null)
+                return formatPrice(minPrice) + " ≤ Price";
+            else if (minPrice == null && maxPrice != null)
+                return "Price ≤ " + formatPrice(maxPrice);
+            else
+                return formatPrice(minPrice) + " ≤ Price ≤ " + formatPrice(maxPrice);
+        }
+
+        // Used to remove decimals when price is a whole number
+        private static String formatPrice(Double price) {
+            if (price == null)
+                return "0";
+
+            // Check if the price is a whole number
+            if (price == Math.floor(price)) {
+                return String.format("%.0f", price);
+            } else {
+                // Format to 2 decimal places and remove trailing zeros
+                return String.format("%.2f", price).replaceAll("0*$", "").replaceAll("\\.$", "");
+            }
         }
 
         private static String formatSortingInfo(Search currentSearch) {
