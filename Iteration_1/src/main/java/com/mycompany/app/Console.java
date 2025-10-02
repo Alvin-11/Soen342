@@ -422,47 +422,89 @@ public class Console {
         ConsoleFormatter.clearConsole();
     }
 
-    private void editDepartureTime() {
+    private void editArrivalTime() {
         ConsoleFormatter.clearConsole();
-        ConsoleFormatter.printCenteredLine("Current departure time: " + this.currentSearch.getDepartureTime());
+        ConsoleFormatter.printCenteredLine("Current arrival day: " +
+                (currentSearch.getArrivalDay().isEmpty() ? "Not set" : currentSearch.getArrivalDay()));
+        ConsoleFormatter.printCenteredLine("Current arrival time: " +
+                (currentSearch.getArrivalTime().isEmpty() ? "Not set" : currentSearch.getArrivalTime()));
         ConsoleFormatter.printSeperatorLine();
-        ConsoleFormatter.printBoxedLine("Format: HH:MM (24-hour format, e.g., 14:30)");
-        ConsoleFormatter.printPrompt("Enter new departure time: ");
 
-        try {
-            String newDepartureTime = scanner.nextLine().trim();
-            if (isValidTimeFormat(newDepartureTime) || newDepartureTime.isEmpty()) {
-                this.currentSearch.setDepartureTime(newDepartureTime);
+        // Get arrival day
+        ConsoleFormatter.printBoxedLine("Valid day formats: Monday, Tuesday, Wed, Thu, etc.");
+        ConsoleFormatter.printPrompt("Enter arrival day (or press Enter to skip): ");
+
+        String newDay = scanner.nextLine().trim();
+        if (!newDay.isEmpty()) {
+            if (isValidSingleDay(newDay)) {
+                currentSearch.setArrivalDay(newDay);
+            } else {
+                ConsoleFormatter.printBoxedLine("Invalid day format. Please use a valid weekday name.");
+                ConsoleFormatter.printPrompt("Press Enter to continue...");
+                scanner.nextLine();
+                ConsoleFormatter.clearConsole();
+                return;
+            }
+        }
+
+        // Get arrival time
+        ConsoleFormatter.printSeperatorLine();
+        ConsoleFormatter.printBoxedLine("Time format: HH:MM (24-hour, e.g., 09:30, 14:45)");
+        ConsoleFormatter.printPrompt("Enter arrival time (or press Enter to skip): ");
+
+        String newTime = scanner.nextLine().trim();
+        if (!newTime.isEmpty()) {
+            if (isValidTimeFormat(newTime)) {
+                currentSearch.setArrivalTime(newTime);
             } else {
                 ConsoleFormatter.printBoxedLine("Invalid time format. Please use HH:MM format.");
                 ConsoleFormatter.printPrompt("Press Enter to continue...");
                 scanner.nextLine();
             }
-        } catch (Exception e) {
-            System.err.println(e);
         }
 
         ConsoleFormatter.clearConsole();
     }
 
-    private void editArrivalTime() {
+    private void editDepartureTime() {
         ConsoleFormatter.clearConsole();
-        ConsoleFormatter.printCenteredLine("Current arrival time: " + this.currentSearch.getArrivalTime());
+        ConsoleFormatter.printCenteredLine("Current departure day: " +
+                (currentSearch.getDepartureDay().isEmpty() ? "Not set" : currentSearch.getDepartureDay()));
+        ConsoleFormatter.printCenteredLine("Current departure time: " +
+                (currentSearch.getDepartureTime().isEmpty() ? "Not set" : currentSearch.getDepartureTime()));
         ConsoleFormatter.printSeperatorLine();
-        ConsoleFormatter.printBoxedLine("Format: HH:MM (24-hour format, e.g., 14:30)");
-        ConsoleFormatter.printPrompt("Enter new arrival time: ");
 
-        try {
-            String newArrivalTime = scanner.nextLine().trim();
-            if (isValidTimeFormat(newArrivalTime) || newArrivalTime.isEmpty()) {
-                this.currentSearch.setArrivalTime(newArrivalTime);
+        // Get departure day
+        ConsoleFormatter.printBoxedLine("Valid day formats: Monday, Tuesday, Wed, Thu, etc.");
+        ConsoleFormatter.printPrompt("Enter departure day (or press Enter to skip): ");
+
+        String newDay = scanner.nextLine().trim();
+        if (!newDay.isEmpty()) {
+            if (isValidSingleDay(newDay)) {
+                currentSearch.setDepartureDay(newDay);
+            } else {
+                ConsoleFormatter.printBoxedLine("Invalid day format. Please use a valid weekday name.");
+                ConsoleFormatter.printPrompt("Press Enter to continue...");
+                scanner.nextLine();
+                ConsoleFormatter.clearConsole();
+                return;
+            }
+        }
+
+        // Get departure time
+        ConsoleFormatter.printSeperatorLine();
+        ConsoleFormatter.printBoxedLine("Time format: HH:MM (24-hour, e.g., 09:30, 14:45)");
+        ConsoleFormatter.printPrompt("Enter departure time (or press Enter to skip): ");
+
+        String newTime = scanner.nextLine().trim();
+        if (!newTime.isEmpty()) {
+            if (isValidTimeFormat(newTime)) {
+                currentSearch.setDepartureTime(newTime);
             } else {
                 ConsoleFormatter.printBoxedLine("Invalid time format. Please use HH:MM format.");
                 ConsoleFormatter.printPrompt("Press Enter to continue...");
                 scanner.nextLine();
             }
-        } catch (Exception e) {
-            System.err.println(e);
         }
 
         ConsoleFormatter.clearConsole();
@@ -755,47 +797,35 @@ public class Console {
 
     private boolean isValidDaysOfOperationFormat(String daysOfOperation) {
         if (daysOfOperation == null || daysOfOperation.trim().isEmpty()) {
-            return true; // Allow empty input
+            return true;
         }
 
         String input = daysOfOperation.trim();
 
-        // Check for "Daily" (case-insensitive)
+        // Accept "Daily"
         if (input.equalsIgnoreCase("Daily")) {
             return true;
         }
 
-        String[] validDaysShort = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
-        String[] validDaysFull = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-
-        // Check if it's a single range (contains exactly one hyphen)
+        // Single range: Mon-Fri
         if (input.contains("-")) {
-            // Must be exactly one range, no commas allowed
             if (input.contains(",")) {
-                return false; // No combination of ranges and comma-separated days
+                return false; // No mixed formats
             }
 
             String[] rangeParts = input.split("-");
             if (rangeParts.length != 2) {
-                return false; // Invalid range format
+                return false;
             }
 
-            String startDay = rangeParts[0].trim();
-            String endDay = rangeParts[1].trim();
-
-            // Validate start and end days
-            return isValidDay(startDay, validDaysShort, validDaysFull) &&
-                    isValidDay(endDay, validDaysShort, validDaysFull);
+            return isValidSingleDay(rangeParts[0].trim()) && isValidSingleDay(rangeParts[1].trim());
         }
 
-        // Check if it's comma-separated days (no hyphens allowed)
+        // Comma-separated: Mon,Wed,Fri
         if (input.contains(",")) {
             String[] parts = input.split(",");
-
-            // Validate each individual day
             for (String part : parts) {
-                part = part.trim();
-                if (!isValidDay(part, validDaysShort, validDaysFull)) {
+                if (!isValidSingleDay(part.trim())) {
                     return false;
                 }
             }
@@ -803,26 +833,35 @@ public class Console {
         }
 
         // Single day
-        return isValidDay(input, validDaysShort, validDaysFull);
+        return isValidSingleDay(input);
     }
 
-    private boolean isValidDay(String day, String[] validDaysShort, String[] validDaysFull) {
+    private boolean isValidSingleDay(String day) {
+        if (day == null || day.trim().isEmpty()) {
+            return false;
+        }
+
+        String[] validDaysShort = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+        String[] validDaysFull = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+
+        String trimmedDay = day.trim();
+
         // Check against short form
         for (String validDay : validDaysShort) {
-            if (day.equalsIgnoreCase(validDay)) {
+            if (trimmedDay.equalsIgnoreCase(validDay)) {
                 return true;
             }
         }
 
         // Check against full form
         for (String validDay : validDaysFull) {
-            if (day.equalsIgnoreCase(validDay)) {
+            if (trimmedDay.equalsIgnoreCase(validDay)) {
                 return true;
             }
         }
 
         return false;
-    } // Helper class to contain all methods related to printing to the ✨console✨
+    }
 
     private class ConsoleFormatter {
         private static final int CONSOLE_WIDTH = 80;
@@ -838,8 +877,10 @@ public class Console {
             printSeperatorLine();
             printMenuItemWithValue("1. Departure City", currentSearch.getDepartureCity());
             printMenuItemWithValue("2. Arrival City", currentSearch.getArrivalCity());
-            printMenuItemWithValue("3. Departure Time", currentSearch.getDepartureTime());
-            printMenuItemWithValue("4. Arrival Time", currentSearch.getArrivalTime());
+            printMenuItemWithValue("3. Departure Time",
+                    currentSearch.getDepartureDay() + " " + currentSearch.getDepartureTime());
+            printMenuItemWithValue("4. Arrival Time",
+                    currentSearch.getArrivalDay() + " " + currentSearch.getArrivalTime());
             printMenuItemWithValue("5. Train Type", currentSearch.getTrainType());
             printMenuItemWithValue("6. Days of Operation", currentSearch.getDaysOfOperation());
             printMenuItemWithValue("7. Seating Class Tier", currentSearch.getSeatingClass());
