@@ -102,7 +102,7 @@ public class Console {
         ConsoleFormatter.clearConsole();
         ConsoleFormatter.printHeader("Search Results");
 
-        // TODO: Implement actual search logic here
+
 
         ConsoleFormatter.printSeperatorLine();
         ConsoleFormatter.printPrompt("Press Enter to return to main menu...");
@@ -212,65 +212,48 @@ public class Console {
     // This method essentials loops through the cities and their connections to find
     // all possible trips from 0 stop t0 2 stop that match the search criteria for
     // departure city and arrival city
-    public ArrayList<Trip> filterbyDepartureCityAndArrivalCity(String DepartureCity, String ArrivalCity,
+    public ArrayList<Trip> filterbyDepartureCityAndArrivalCity(String departureCityName, String arrivalCityName,
             String departureDay, String departureTime) {
+
         ArrayList<Trip> baseTrips = new ArrayList<Trip>();
-        City departureCity = cityCatalog.getCity(DepartureCity);
-        City arrivalCity = cityCatalog.getCity(ArrivalCity);
+        City departureCity = cityCatalog.getCity(departureCityName);
+        City arrivalCity = cityCatalog.getCity(arrivalCityName);
 
         if (departureCity == null | arrivalCity == null) {
             throw new IllegalArgumentException("One or both of the specified cities do not exist in the catalog.");
         }
-        for (Connection conn : departureCity.outgoingConnections) {
-            Connection[] connections = new Connection[1];
-            connections[0] = conn;
-            if (conn.arrivalCity.getCityName().equals(ArrivalCity)) { // Checking that the arrival city of the
-                                                                      // connection is the same for a direct connection
-                Trip trip;
-                if (departureDay.length() > 0 || departureTime.length() > 0) {
-                    trip = new Trip(connections, departureDay, departureTime);
-                } else {
-                    trip = new Trip(connections);
-                }
-                baseTrips.add(trip);
+
+        if (departureDay == null || departureDay.trim() == "") {
+            departureDay = "Monday";
+        }
+
+        if (departureTime == null || departureTime.trim() == "") {
+            departureTime = "00:00";
+        }
+
+        for (Connection conn1 : departureCity.outgoingConnections) {
+            if (conn1.arrivalCity == arrivalCity) { // Checking that the arrival city of the
+                                                   // connection is the same for a direct connection
+                baseTrips.add(new Trip(new Connection[]{conn1}, departureDay, departureTime));
             }
-            City departureCity1 = conn.arrivalCity;
-            for (Connection conn2 : departureCity1.outgoingConnections) {
-                Connection[] connection2 = new Connection[2];
-                connection2[0] = conn;
-                connection2[1] = conn2;
-                if (conn2.arrivalCity.getCityName().equals(ArrivalCity)) { // Checking that the arrival city of the
-                                                                           // connection is the same for a 1-stop
-                                                                           // Indirect connection
-                    Trip trip;
-                    if (departureDay.length() > 0 || departureTime.length() > 0) {
-                        trip = new Trip(connection2, departureDay, departureTime);
-                    } else {
-                        trip = new Trip(connection2);
-                    }
-                    baseTrips.add(trip);
+
+            for (Connection conn2 : conn1.arrivalCity.outgoingConnections) {
+                if (conn2.arrivalCity == arrivalCity) { // Checking that the arrival city of the
+                                                        // connection is the same for a 1-stop
+                                                        // Indirect connection
+                    baseTrips.add(new Trip(new Connection[]{conn1, conn2}, departureDay, departureTime));
                 }
 
-                City departureCity2 = conn2.arrivalCity;
-                for (Connection conn3 : departureCity2.outgoingConnections) {
-                    Connection[] connection3 = new Connection[3];
-                    connection3[0] = conn;
-                    connection3[1] = conn2;
-                    connection3[2] = conn3;
-                    if (conn3.arrivalCity.getCityName().equals(ArrivalCity)) { // Checking that the arrival city of the
-                                                                               // connection is the same for a 2-stop
-                                                                               // Indirect connection
-                        Trip trip;
-                        if (departureDay.length() > 0 || departureTime.length() > 0) {
-                            trip = new Trip(connection3, departureDay, departureTime);
-                        } else {
-                            trip = new Trip(connection3);
-                        }
-                        baseTrips.add(trip);
+                for (Connection conn3 : conn2.arrivalCity.outgoingConnections) {
+                    if (conn3.arrivalCity == arrivalCity) { // Checking that the arrival city of the
+                                                            // connection is the same for a 2-stop
+                                                            // Indirect connection
+                        baseTrips.add(new Trip(new Connection[]{conn1, conn2, conn3}, departureDay, departureTime));
                     }
                 }
             }
         }
+
         return baseTrips;
     }
 
