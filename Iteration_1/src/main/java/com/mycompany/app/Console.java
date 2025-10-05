@@ -2,7 +2,7 @@ package com.mycompany.app;
 
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Scanner;
 
 import com.opencsv.CSVReader;
@@ -29,7 +29,10 @@ public class Console {
     // Called from main to start the console
     public void start() {
         this.running = true;
+
         // Run csv processing here
+        addFilePath("Iteration_1/src/main/resources/eu_rail_network.csv");
+
         ConsoleFormatter.clearConsole();
         ConsoleFormatter.printHeader("Welcome to the European Rail Planning System");
 
@@ -102,9 +105,40 @@ public class Console {
         ConsoleFormatter.clearConsole();
         ConsoleFormatter.printHeader("Search Results");
 
+        //TODO remove (tests)
+        this.currentSearch.setDepartureCity("A Coruña");
+        this.currentSearch.setArrivalCity("Santander");
 
+        //get all the base trips
+        ArrayList<Trip> trips = filterbyDepartureCityAndArrivalCity(
+            this.currentSearch.getDepartureCity(),
+            this.currentSearch.getArrivalCity(),
+            this.currentSearch.getDepartureDay(),
+            this.currentSearch.getDepartureTime()
+        );
 
-        ConsoleFormatter.printSeperatorLine();
+        //TODO filter by:
+        // private String departureDay;
+        // private String departureTime;
+        // private String arrivalDay;
+        // private String arrivalTime;
+        // private String trainType;
+        // private String daysOfOperation;
+        // private Double minCost;
+        // private Double maxCost;
+        // private String seatingClass;
+
+        //TODO sort by:
+        // private String sortBy;
+        // private String Order;
+
+        // print the trip table
+        ConsoleFormatter.printTripTableHeader();
+        for (Trip t : trips) {
+            ConsoleFormatter.printTrip(t);
+        }
+
+        System.out.println();
         ConsoleFormatter.printPrompt("Press Enter to return to main menu...");
         scanner.nextLine();
         ConsoleFormatter.clearConsole();
@@ -219,7 +253,7 @@ public class Console {
         City departureCity = cityCatalog.getCity(departureCityName);
         City arrivalCity = cityCatalog.getCity(arrivalCityName);
 
-        if (departureCity == null | arrivalCity == null) {
+        if (departureCity == null || arrivalCity == null) {
             throw new IllegalArgumentException("One or both of the specified cities do not exist in the catalog.");
         }
 
@@ -851,6 +885,34 @@ public class Console {
         private static final String BORDER_CHAR = "█";
         private static final String PADDING_CHAR = " ";
 
+        private static final String[] COLUMN_TITLES = {
+            "Departure City",
+            "Arrival City",
+            "Departure Time",
+            "Arrival Time",
+            "Train Type",
+            "Days of Operation",
+            "1st Class Rate",
+            "2nd Class Rate",
+            "Trip Duration",
+            "Wait Time"
+        };
+
+        private static final int[] COLUMN_WIDTHS = {
+            15, // Departure City
+            13, // Arrival City
+            15, // Departure Time
+            13, // Arrival Time
+            10, // Train Type
+            18, // Days of Operation
+            15, // 1st Class Rate
+            15, // 2nd Class Rate
+            14, // Trip Duration
+            10  // Wait Time
+        };
+
+        private static final int SEPARTOR_WIDTH = Arrays.stream(COLUMN_WIDTHS).sum() + COLUMN_WIDTHS.length - 1;
+
         private ConsoleFormatter() {
         }
 
@@ -997,5 +1059,107 @@ public class Console {
             }
         }
 
+        private static void printTableCell(String value, int width) {
+            if (width < 3) {
+                throw new IllegalArgumentException("Cell width is too small");
+            }
+            else if (value.length() > width) {
+                System.out.print(value.substring(0, width - 3));
+                System.out.print("...");
+            }
+            else {
+                System.out.print(value);
+                System.out.print(" ".repeat(width - value.length()));
+            }
+        }
+
+        private static void printTripTableHeader() {
+            System.out.println();
+
+            for (int i = 0; i < COLUMN_TITLES.length; i++) {
+                String title = COLUMN_TITLES[i];
+                int width = COLUMN_WIDTHS[i];
+
+                printTableCell(title, width);
+
+                if (i != COLUMN_TITLES.length - 1) {
+                    System.out.print("|");
+                }
+            }
+
+            System.out.println();
+            System.out.println("-".repeat(SEPARTOR_WIDTH));
+        }
+
+        private static void printTrip(Trip trip) {
+            ArrayList<Connection> conns = trip.getConnections();
+
+            // print the departure city
+            printTableCell(trip.getDepartureCity().getCityName(), COLUMN_WIDTHS[0]);
+            System.out.print("|");
+
+            // print the arrival city
+            printTableCell(trip.getArrivalCity().getCityName(), COLUMN_WIDTHS[1]);
+            System.out.print("|");
+
+            // print the departure time
+            printTableCell(trip.getDepartureDate(), COLUMN_WIDTHS[2]);
+            System.out.print("|");
+
+            // print the arrival time
+            printTableCell(trip.getArrivalDate(), COLUMN_WIDTHS[3]);
+            System.out.print("|");
+
+            // print the train type
+            printTableCell(conns.get(0).trainType, COLUMN_WIDTHS[4]);
+            System.out.print("|");
+
+            // print the days of operation
+            printTableCell(conns.get(0).getDaysOfOperation(), COLUMN_WIDTHS[5]);
+            System.out.print("|");
+
+            // print the first class ticket rate
+            printTableCell(String.format("%.2f", trip.getFirstClassTicketRate()), COLUMN_WIDTHS[6]);
+            System.out.print("|");
+
+            // print the second class ticket rate
+            printTableCell(String.format("%.2f", trip.getSecondClassTicketRate()), COLUMN_WIDTHS[7]);
+            System.out.print("|");
+
+            // print the trip duration
+            printTableCell(trip.getTripDuration(), COLUMN_WIDTHS[8]);
+            System.out.print("|");
+
+            // print the wait time
+            printTableCell(trip.getWaitTimeDuration(), COLUMN_WIDTHS[9]);
+
+            // repeat train type and days of operation for each connection
+            for (int i = 1; i < conns.size(); i++) {
+                System.out.println();
+
+                for (int j = 0; j < 4; j++) {
+                    printTableCell("", COLUMN_WIDTHS[j]);
+                    System.out.print("|");
+                }
+
+                // print the train type
+                printTableCell(conns.get(i).trainType, COLUMN_WIDTHS[4]);
+                System.out.print("|");
+
+                // print the days of operation
+                printTableCell(conns.get(i).getDaysOfOperation(), COLUMN_WIDTHS[5]);
+                System.out.print("|");
+
+                for (int j = 6; j < COLUMN_WIDTHS.length; j++) {
+                    printTableCell("", COLUMN_WIDTHS[j]);
+                    if (j != COLUMN_WIDTHS.length - 1) {
+                        System.out.print("|");
+                    }
+                }
+            }
+
+            System.out.println();
+            System.out.println("-".repeat(SEPARTOR_WIDTH));
+        }
     }
 }
