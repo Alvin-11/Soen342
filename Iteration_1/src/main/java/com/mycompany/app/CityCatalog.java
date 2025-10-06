@@ -10,14 +10,14 @@ public class CityCatalog {
     }
 
     public City getCity(String cityName) {
-        return this.cities.get(cityName);
+        return this.cities.get(cityName.trim().toUpperCase());
     }
 
     public void addCity(City city) {
-        this.cities.put(city.getCityName(), city);
+        this.cities.put(city.getCityName().trim().toUpperCase(), city);
     }
 
     public void deleteCity(City city) {
-        this.cities.remove(city.getCityName());
+        this.cities.remove(city.getCityName().trim().toUpperCase());
     }
 }
