@@ -147,10 +147,10 @@ public class Console {
             maxCost = Double.MAX_VALUE;
         }
 
-        if (seatingClass == "First Class") {
+        if (seatingClass.equals("First Class")) {
             trips = filterbyFirstClassTicketRate(trips, maxCost, minCost);
         }
-        else if (seatingClass == "Second Class") {
+        else if (seatingClass.equals("Second Class")) {
             trips = filterbySecondClassTicketRate(trips, maxCost, minCost);
         }
 
@@ -282,11 +282,11 @@ public class Console {
             throw new IllegalArgumentException("One or both of the specified cities do not exist in the catalog.");
         }
 
-        if (departureDay == null || departureDay.trim() == "") {
+        if (departureDay == null || departureDay.trim().isEmpty()) {
             departureDay = "Monday";
         }
 
-        if (departureTime == null || departureTime.trim() == "") {
+        if (departureTime == null || departureTime.trim().isEmpty()) {
             departureTime = "00:00";
         }
 
@@ -434,15 +434,15 @@ public class Console {
     }
 
     public void sortTrips(ArrayList<Trip> trip, String sortBy, String order, String seatingClass) {
-        if (sortBy == "Departure Time") {
-            if (order == "Ascending") {
+        if (sortBy.equals("Departure Time")) {
+            if (order.equals("Ascending")) {
                 trip.sort(new Comparator<Trip>() {
                     public int compare(Trip t1, Trip t2) {
                         return t1.getRealDepartureTime() - t2.getRealDepartureTime();
                     }
                 });
             }
-            else if (order == "Descending") {
+            else if (order.equals("Descending")) {
                 trip.sort(new Comparator<Trip>() {
                     public int compare(Trip t1, Trip t2) {
                         return t2.getRealDepartureTime() - t1.getRealDepartureTime();
@@ -450,15 +450,15 @@ public class Console {
                 });
             }
         }
-        else if (sortBy == "Arrival Time") {
-            if (order == "Ascending") {
+        else if (sortBy.equals("Arrival Time")) {
+            if (order.equals("Ascending")) {
                 trip.sort(new Comparator<Trip>() {
                     public int compare(Trip t1, Trip t2) {
                         return t1.getArrivalTime() - t2.getArrivalTime();
                     }
                 });
             }
-            else if (order == "Descending") {
+            else if (order.equals("Descending")) {
                 trip.sort(new Comparator<Trip>() {
                     public int compare(Trip t1, Trip t2) {
                         return t2.getArrivalTime() - t1.getArrivalTime();
@@ -466,16 +466,16 @@ public class Console {
                 });
             }
         }
-        else if (sortBy == "Price") {
-            if (seatingClass == "First Class") {
-                if (order == "Ascending") {
+        else if (sortBy.equals("Price")) {
+            if (seatingClass.equals("First Class")) {
+                if (order.equals("Ascending")) {
                     trip.sort(new Comparator<Trip>() {
                         public int compare(Trip t1, Trip t2) {
                             return (int) (t1.getFirstClassTicketRate() * 100 - t2.getFirstClassTicketRate() * 100);
                         }
                     });
                 }
-                else if (order == "Descending") {
+                else if (order.equals("Descending")) {
                     trip.sort(new Comparator<Trip>() {
                         public int compare(Trip t1, Trip t2) {
                             return (int) (t2.getFirstClassTicketRate() * 100 - t1.getFirstClassTicketRate() * 100);
@@ -483,15 +483,15 @@ public class Console {
                     });
                 }
             }
-            else if (seatingClass == "Second Class") {
-                if (order == "Ascending") {
+            else if (seatingClass.equals("Second Class")) {
+                if (order.equals("Ascending")) {
                     trip.sort(new Comparator<Trip>() {
                         public int compare(Trip t1, Trip t2) {
                             return (int) (t1.getSecondClassTicketRate() * 100 - t2.getSecondClassTicketRate() * 100);
                         }
                     });
                 }
-                else if (order == "Descending") {
+                else if (order.equals("Descending")) {
                     trip.sort(new Comparator<Trip>() {
                         public int compare(Trip t1, Trip t2) {
                             return (int) (t2.getSecondClassTicketRate() * 100 - t1.getSecondClassTicketRate() * 100);
@@ -500,15 +500,15 @@ public class Console {
                 }
             }
         }
-        else if (sortBy == "Duration") {
-            if (order == "Ascending") {
+        else if (sortBy.equals("Duration")) {
+            if (order.equals("Ascending")) {
                 trip.sort(new Comparator<Trip>() {
                     public int compare(Trip t1, Trip t2) {
                         return t1.getDurationTime() - t2.getDurationTime();
                     }
                 });
             }
-            else if (order == "Descending") {
+            else if (order.equals("Descending")) {
                 trip.sort(new Comparator<Trip>() {
                     public int compare(Trip t1, Trip t2) {
                         return t2.getDurationTime() - t1.getDurationTime();
