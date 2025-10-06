@@ -148,7 +148,7 @@ public class Trip {
         return secondClassTicketRate;
     }
 
-    public int getDepartureTime() {
+    public int getDesiredDepartureTime() {
         return departureTime;
     }
 
@@ -162,6 +162,18 @@ public class Trip {
 
     public int getChangeWaitTime() {
         return changeWaitTime;
+    }
+
+    public int getRealDepartureTime() {
+        return initialWaitTime + departureTime;
+    }
+
+    public int getArrivalTime() {
+        return initialWaitTime + departureTime + travelTime + changeWaitTime;
+    }
+
+    public int getDurationTime() {
+        return travelTime + changeWaitTime;
     }
 
     public int getNumberOfConnections() {

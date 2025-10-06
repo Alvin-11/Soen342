@@ -29,4 +29,29 @@ public class Connection {
     public String getRouteID() {
         return this.routeID;
     }
+
+    public String getDaysOfOperation() {
+        if (daysOfOperation.size() == 7) {
+            return "Daily";
+        }
+
+        String[] DaysInAWeek = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+        String[] DaysInaWeekShortened = { "M", "Tu", "W", "Th", "F", "Sat", "Sun" };
+        int i = 0;
+        String res = "";
+
+        for (String day: daysOfOperation) {
+            while (!day.equalsIgnoreCase(DaysInAWeek[i])) {
+                i++;
+            }
+
+            if (res.length() > 0) {
+                res += ", ";
+            }
+
+            res += DaysInaWeekShortened[i];
+        }
+
+        return res;
+    }
 }
