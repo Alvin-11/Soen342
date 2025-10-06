@@ -3,6 +3,7 @@ package com.mycompany.app;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Scanner;
 
 import com.opencsv.CSVReader;
@@ -105,10 +106,6 @@ public class Console {
         ConsoleFormatter.clearConsole();
         ConsoleFormatter.printHeader("Search Results");
 
-        //TODO remove (tests)
-        this.currentSearch.setDepartureCity("A Coruña");
-        this.currentSearch.setArrivalCity("Santander");
-
         //get all the base trips
         ArrayList<Trip> trips = filterbyDepartureCityAndArrivalCity(
             this.currentSearch.getDepartureCity(),
@@ -117,20 +114,48 @@ public class Console {
             this.currentSearch.getDepartureTime()
         );
 
-        //TODO filter by:
-        // private String departureDay;
-        // private String departureTime;
-        // private String arrivalDay;
-        // private String arrivalTime;
-        // private String trainType;
-        // private String daysOfOperation;
-        // private Double minCost;
-        // private Double maxCost;
-        // private String seatingClass;
+        // assume that if a departure day is provided then a departure time is also be provided and vice-versa
+        // more permissible logic can be implemented later
+        if (this.currentSearch.getDepartureDay() != "" || this.currentSearch.getDepartureTime() != "") {
+            trips = filterbyDepartureTime(trips);
+        }
 
-        //TODO sort by:
-        // private String sortBy;
-        // private String Order;
+        // assume that if an arrival day is provided then an arrival time is also be provided and vice-versa
+        // more permissible logic can be implemented later
+        if (this.currentSearch.getArrivalDay() != "" || this.currentSearch.getArrivalTime() != "") {
+            trips = filterbyArrivalTime(trips, this.currentSearch.getArrivalDay(), this.currentSearch.getArrivalTime());
+        }
+
+        if (this.currentSearch.getTrainType() != "") {
+            trips = filterbyTrainType(trips, this.currentSearch.getTrainType());
+        }
+
+        if (this.currentSearch.getDaysOfOperation() != "") {
+            trips = filterbyDaysOfOperation(trips, this.currentSearch.getDaysOfOperation());
+        }
+
+        // assume that if a price filter is provided then a seating class is provided
+        String seatingClass = this.currentSearch.getSeatingClass();
+        Double minCost = this.currentSearch.getMinCost();
+        Double maxCost = this.currentSearch.getMaxCost();
+
+        if (minCost == null) {
+            minCost = Double.MIN_VALUE;
+        }
+
+        if (maxCost == null) {
+            maxCost = Double.MAX_VALUE;
+        }
+
+        if (seatingClass == "First Class") {
+            trips = filterbyFirstClassTicketRate(trips, maxCost, minCost);
+        }
+        else if (seatingClass == "Second Class") {
+            trips = filterbySecondClassTicketRate(trips, maxCost, minCost);
+        }
+
+        // sort the trips
+        sortTrips(trips, this.currentSearch.getSortBy(), this.currentSearch.getOrder(), this.currentSearch.getSeatingClass());
 
         // print the trip table
         ConsoleFormatter.printTripTableHeader();
@@ -199,7 +224,7 @@ public class Console {
         String[] DaysInAWeek = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
         String[] DaysInaWeekShortened = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
         ArrayList<String> daysofOperation1 = new ArrayList<String>();
-        if (daysOfOperation.equals("Daily")) {
+        if (daysOfOperation.equalsIgnoreCase("Daily")) {
             for (String day : DaysInAWeek) {
                 daysofOperation1.add(day);
             }
@@ -208,7 +233,7 @@ public class Console {
             for (String data : days) {
                 if (data.length() < 6) {
                     for (int i = 0; i < 7; i++) {
-                        if (data.equals(DaysInaWeekShortened[i])) {
+                        if (data.equalsIgnoreCase(DaysInaWeekShortened[i])) {
                             daysofOperation1.add(DaysInAWeek[i]);
                         }
                     }
@@ -217,10 +242,10 @@ public class Console {
                     int startIndex = 0;
                     int endIndex = 0;
                     for (int i = 0; i < 7; i++) {
-                        if (dayStrings[0].equals(DaysInaWeekShortened[i])) {
+                        if (dayStrings[0].equalsIgnoreCase(DaysInaWeekShortened[i])) {
                             startIndex = i;
                         }
-                        if (dayStrings[1].equals(DaysInaWeekShortened[i])) {
+                        if (dayStrings[1].equalsIgnoreCase(DaysInaWeekShortened[i])) {
                             endIndex = i;
                         }
                     }
@@ -311,13 +336,13 @@ public class Console {
         return filteredTrips;
     }
 
-    public ArrayList<Trip> filterbyFirstClassTicketRate(ArrayList<Trip> trip, int upper, int lower) { // This method
-                                                                                                      // filter trips
-                                                                                                      // based on the
-                                                                                                      // first class
-                                                                                                      // ticket rate
-                                                                                                      // provided by the
-                                                                                                      // user
+    public ArrayList<Trip> filterbyFirstClassTicketRate(ArrayList<Trip> trip, double upper, double lower) { // This method
+                                                                                                            // filter trips
+                                                                                                            // based on the
+                                                                                                            // first class
+                                                                                                            // ticket rate
+                                                                                                            // provided by the
+                                                                                                            // user
         ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
         for (Trip trip1 : trip) {
             if (trip1.getFirstClassTicketRate() <= upper & trip1.getFirstClassTicketRate() >= lower) {
@@ -328,13 +353,13 @@ public class Console {
         return filteredTrips;
     }
 
-    public ArrayList<Trip> filterbySecondClassTicketRate(ArrayList<Trip> trip, int upper, int lower) { // This method
-                                                                                                       // filter trips
-                                                                                                       // based on the
-                                                                                                       // second class
-                                                                                                       // ticket rate
-                                                                                                       // provided by
-                                                                                                       // the user
+    public ArrayList<Trip> filterbySecondClassTicketRate(ArrayList<Trip> trip, double upper, double lower) { // This method
+                                                                                                             // filter trips
+                                                                                                             // based on the
+                                                                                                             // second class
+                                                                                                             // ticket rate
+                                                                                                             // provided by
+                                                                                                             // the user
         ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
         for (Trip trip1 : trip) {
             if (trip1.getSecondClassTicketRate() <= upper & trip1.getSecondClassTicketRate() >= lower) {
@@ -400,11 +425,97 @@ public class Console {
                                                                                                               // user
         ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
         for (Trip trip1 : trip) {
-            if (trip1.getArrivalDate().contains(ArrivalDay) & trip1.getArrivalDate().contains(ArrivalTime)) {
+            String arrivalDate = trip1.getArrivalDate().toLowerCase();
+            if (arrivalDate.contains(ArrivalDay.toLowerCase()) && arrivalDate.contains(ArrivalTime.toLowerCase())) {
                 filteredTrips.add(trip1);
             }
         }
         return filteredTrips;
+    }
+
+    public void sortTrips(ArrayList<Trip> trip, String sortBy, String order, String seatingClass) {
+        if (sortBy == "Departure Time") {
+            if (order == "Ascending") {
+                trip.sort(new Comparator<Trip>() {
+                    public int compare(Trip t1, Trip t2) {
+                        return t1.getRealDepartureTime() - t2.getRealDepartureTime();
+                    }
+                });
+            }
+            else if (order == "Descending") {
+                trip.sort(new Comparator<Trip>() {
+                    public int compare(Trip t1, Trip t2) {
+                        return t2.getRealDepartureTime() - t1.getRealDepartureTime();
+                    }
+                });
+            }
+        }
+        else if (sortBy == "Arrival Time") {
+            if (order == "Ascending") {
+                trip.sort(new Comparator<Trip>() {
+                    public int compare(Trip t1, Trip t2) {
+                        return t1.getArrivalTime() - t2.getArrivalTime();
+                    }
+                });
+            }
+            else if (order == "Descending") {
+                trip.sort(new Comparator<Trip>() {
+                    public int compare(Trip t1, Trip t2) {
+                        return t2.getArrivalTime() - t1.getArrivalTime();
+                    }
+                });
+            }
+        }
+        else if (sortBy == "Price") {
+            if (seatingClass == "First Class") {
+                if (order == "Ascending") {
+                    trip.sort(new Comparator<Trip>() {
+                        public int compare(Trip t1, Trip t2) {
+                            return (int) (t1.getFirstClassTicketRate() * 100 - t2.getFirstClassTicketRate() * 100);
+                        }
+                    });
+                }
+                else if (order == "Descending") {
+                    trip.sort(new Comparator<Trip>() {
+                        public int compare(Trip t1, Trip t2) {
+                            return (int) (t2.getFirstClassTicketRate() * 100 - t1.getFirstClassTicketRate() * 100);
+                        }
+                    });
+                }
+            }
+            else if (seatingClass == "Second Class") {
+                if (order == "Ascending") {
+                    trip.sort(new Comparator<Trip>() {
+                        public int compare(Trip t1, Trip t2) {
+                            return (int) (t1.getSecondClassTicketRate() * 100 - t2.getSecondClassTicketRate() * 100);
+                        }
+                    });
+                }
+                else if (order == "Descending") {
+                    trip.sort(new Comparator<Trip>() {
+                        public int compare(Trip t1, Trip t2) {
+                            return (int) (t2.getSecondClassTicketRate() * 100 - t1.getSecondClassTicketRate() * 100);
+                        }
+                    });
+                }
+            }
+        }
+        else if (sortBy == "Duration") {
+            if (order == "Ascending") {
+                trip.sort(new Comparator<Trip>() {
+                    public int compare(Trip t1, Trip t2) {
+                        return t1.getDurationTime() - t2.getDurationTime();
+                    }
+                });
+            }
+            else if (order == "Descending") {
+                trip.sort(new Comparator<Trip>() {
+                    public int compare(Trip t1, Trip t2) {
+                        return t2.getDurationTime() - t1.getDurationTime();
+                    }
+                });
+            }
+        }
     }
 
     private void editDepartureCity() {

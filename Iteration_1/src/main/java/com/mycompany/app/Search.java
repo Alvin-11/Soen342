@@ -67,7 +67,17 @@ public class Search {
     }
 
     public void setDepartureDay(String departureDay) {
-        this.departureDay = departureDay;
+        String[] validDaysShort = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+        String[] validDaysFull = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+
+        String trimmedDay = departureDay.trim();
+
+        for (int i = 0; i < 7; i++) {
+            if (trimmedDay.equalsIgnoreCase(validDaysShort[i]) || trimmedDay.equalsIgnoreCase(validDaysFull[i])) {
+                this.departureDay = validDaysFull[i];
+                break;
+            }
+        }
     }
 
     public String getDepartureTime() {
@@ -83,7 +93,17 @@ public class Search {
     }
 
     public void setArrivalDay(String arrivalDay) {
-        this.arrivalDay = arrivalDay;
+        String[] validDaysShort = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+        String[] validDaysFull = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+
+        String trimmedDay = arrivalDay.trim();
+
+        for (int i = 0; i < 7; i++) {
+            if (trimmedDay.equalsIgnoreCase(validDaysShort[i]) || trimmedDay.equalsIgnoreCase(validDaysFull[i])) {
+                this.arrivalDay = validDaysFull[i];
+                break;
+            }
+        }
     }
 
     public String getArrivalTime() {
