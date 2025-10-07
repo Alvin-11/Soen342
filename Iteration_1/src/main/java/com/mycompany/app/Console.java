@@ -138,11 +138,13 @@ public class Console {
          if(this.currentSearch.getMinCost() <0){
             validSearch=false;
             errorMessage="Minimum cost cannot be negative.\n";
-         }
+         }}
+         if(this.currentSearch.getMaxCost() != null){
          if(this.currentSearch.getMaxCost() <0){
             validSearch=false;
             errorMessage="Maximum cost cannot be negative.\n";
-         }
+         }}
+          if(this.currentSearch.getMinCost() != null & this.currentSearch.getMaxCost() != null){
          if(this.currentSearch.getMaxCost() < this.currentSearch.getMinCost()){
             validSearch=false;
             errorMessage="Maximum cost cannot be less than the Minimum cost.\n";
