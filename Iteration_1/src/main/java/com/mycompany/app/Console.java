@@ -85,7 +85,7 @@ public class Console {
                     break;
                 case "s":
                 case "search":
-                    runSearch();
+                    checkValuesForRunSearch();
                     break;
                 // Invalid choice
                 default:
@@ -99,6 +99,64 @@ public class Console {
             ConsoleFormatter.printBoxedLine("An error occurred. Please try again.");
             ConsoleFormatter.printPrompt("Press Enter to continue...");
             scanner.nextLine();
+        }
+    }
+
+     public void checkValuesForRunSearch(){
+        ConsoleFormatter.clearConsole();
+        boolean validSearch=true;
+        String errorMessage="";
+        
+        if(cityCatalog.getCity(this.currentSearch.getDepartureCity())==null & cityCatalog.getCity(this.currentSearch.getArrivalCity())==null){
+            validSearch=false;
+            errorMessage="Both departure and arrival cities do not exist in the catalog.\n";
+        }
+        else if (cityCatalog.getCity(this.currentSearch.getDepartureCity())==null ){
+            validSearch=false;
+            errorMessage="Departure city does not exist in the catalog. \n";
+        }
+        else if(cityCatalog.getCity(this.currentSearch.getArrivalCity())==null){
+            validSearch=false;
+            errorMessage="Arrival city does not exist in the catalog.\n";
+        }
+
+         if (this.currentSearch.getTrainType() != "") {
+            boolean trainTypeExists=false;
+            for(Connection conn: connectionCatalog.getAllConnections()){
+                if(conn.trainType.equalsIgnoreCase(this.currentSearch.getTrainType())){
+                    trainTypeExists=true;
+                    break;
+                }
+            }
+            if(!trainTypeExists){
+                validSearch=false;
+                errorMessage="Train type does not exist in the catalog.\n";
+            }
+         }
+
+         if(this.currentSearch.getMinCost() != null){
+         if(this.currentSearch.getMinCost() <0){
+            validSearch=false;
+            errorMessage="Minimum cost cannot be negative.\n";
+         }
+         if(this.currentSearch.getMaxCost() <0){
+            validSearch=false;
+            errorMessage="Maximum cost cannot be negative.\n";
+         }
+         if(this.currentSearch.getMaxCost() < this.currentSearch.getMinCost()){
+            validSearch=false;
+            errorMessage="Maximum cost cannot be less than the Minimum cost.\n";
+         }}
+
+        if(!validSearch)
+        {
+            ConsoleFormatter.printSeperatorLine();
+            ConsoleFormatter.printBoxedLine(errorMessage);
+            ConsoleFormatter.printPrompt("Press Enter to continue...");
+            scanner.nextLine();
+        }
+        else{
+            runSearch();
         }
     }
 

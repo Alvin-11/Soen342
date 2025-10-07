@@ -20,4 +20,8 @@ public class ConnectionCatalog {
     public int size() {
         return this.connections.size();
     }
+    
+    public ArrayList<Connection> getAllConnections() {
+        return this.connections;
+    }
 }
