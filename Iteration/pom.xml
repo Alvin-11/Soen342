@@ -4,10 +4,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.mycompany.app</groupId>
-  <artifactId>Iteration_1</artifactId>
+  <artifactId>Iteration</artifactId>
   <version>1.0-SNAPSHOT</version>
 
-  <name>Iteration_1</name>
+  <name>Iteration</name>
   <!-- FIXME change it to the project's website -->
   <url>http://www.example.com</url>
 
