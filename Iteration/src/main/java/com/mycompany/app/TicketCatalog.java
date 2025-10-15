@@ -9,7 +9,7 @@ public class TicketCatalog {
        this.tickets = new HashMap<Integer, Ticket>();
     }
 
-   public Ticket getCity(int ticketID) {
+   public Ticket getTicket(int ticketID) {
         return this.tickets.get(ticketID);
     }
 

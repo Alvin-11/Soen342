@@ -7,7 +7,7 @@ public class ClientCatalog {
     public ClientCatalog() {
         this.clients = new HashMap<String, Client>();
     }
-   public Client getCity(String clientID) {
+   public Client getClient(String clientID) {
         return this.clients.get(clientID);
     }
 
