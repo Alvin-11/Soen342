@@ -14,6 +14,9 @@ public class Console {
     private CityCatalog cityCatalog;
     private ConnectionCatalog connectionCatalog;
     private Search currentSearch;
+    private ClientCatalog clientCatalog;
+    private TicketCatalog ticketCatalog;
+
 
     private Scanner scanner;
 
@@ -32,7 +35,7 @@ public class Console {
         this.running = true;
 
         // Run csv processing here
-        addFilePath("Iteration_1/src/main/resources/eu_rail_network.csv");
+        addFilePath("Iteration/src/main/resources/eu_rail_network.csv");
 
         ConsoleFormatter.clearConsole();
         ConsoleFormatter.printHeader("Welcome to the European Rail Planning System");
@@ -106,6 +109,7 @@ public class Console {
         ConsoleFormatter.clearConsole();
         boolean validSearch=true;
         String errorMessage="";
+        
         
         if(cityCatalog.getCity(this.currentSearch.getDepartureCity())==null & cityCatalog.getCity(this.currentSearch.getArrivalCity())==null){
             validSearch=false;
@@ -227,6 +231,32 @@ public class Console {
         ConsoleFormatter.printPrompt("Press Enter to return to main menu...");
         scanner.nextLine();
         ConsoleFormatter.clearConsole();
+    }
+
+    public Ticket reserveTrip(Client client, Trip trip){
+        Ticket ticket = new Ticket(client, trip);
+        ticketCatalog.addTicket(ticket);
+        return ticket;
+    }
+
+    public Client getClientID(String ID){
+        Client client = clientCatalog.getClient(ID);
+        return client;
+    }
+    
+    public Trip getTrip(ArrayList<Trip> trips, String ID){
+        for(Trip trip: trips){
+            if(trip.getTripID().equals(ID)){
+                return trip;
+            }
+        }
+        return null;
+    }
+
+    public Client createClient(String firstName, String lastName, int age){
+        Client client = new Client(firstName, lastName, age);
+        clientCatalog.addClient(client);
+        return client;
     }
 
     public void addFilePath(String filePath) {
