@@ -1,21 +1,25 @@
 package com.mycompany.app;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ClientCatalog {
-    private ArrayList<Client> clients;
+    private HashMap<String,Client> clients;
     public ClientCatalog() {
-        this.clients = new ArrayList<Client>();
+        this.clients = new HashMap<String, Client>();
     }
+   public Client getCity(String clientID) {
+        return this.clients.get(clientID);
+    }
+
     public void addClient(Client client) {
-        this.clients.add(client);
+        this.clients.put(client.getClientID(), client);
     }
-    public Client getClient(int index) {
-        return this.clients.get(index);
+
+    public void deleteClient(Client client) {
+        this.clients.remove(client.getClientID());
     }
-    public int size() {
-        return this.clients.size();
-    }
-    public ArrayList<Client> getAllClients() {
+
+    public HashMap<String,Client> getAllClients() {
         return this.clients;
     }
 }

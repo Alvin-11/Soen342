@@ -1,11 +1,13 @@
 package com.mycompany.app;
 
 import java.util.ArrayList;
-
+import java.util.UUID;
 public class Trip {
     private static final int MINUTES_PER_HOUR = 60;
     private static final int MINUTES_PER_DAY = MINUTES_PER_HOUR * 24;
     private static final int MINUTES_PER_WEEK = MINUTES_PER_DAY * 7;
+
+    private final String tripID = UUID.randomUUID().toString();
 
     private City departureCity;
     private City arrivalCity;
@@ -238,5 +240,9 @@ public class Trip {
         minutes %= MINUTES_PER_HOUR;
 
         return (days > 0 ? days + "d " : "") + hours + "h " + minutes + "m";
+    }
+
+    public String getTripID() {
+        return tripID;
     }
 }

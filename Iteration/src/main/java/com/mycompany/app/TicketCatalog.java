@@ -1,22 +1,27 @@
 package com.mycompany.app;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TicketCatalog {
-    private ArrayList<Ticket> tickets;
+    private HashMap<Integer,Ticket> tickets;
 
     public TicketCatalog() {
-        this.tickets = new ArrayList<Ticket>();
+       this.tickets = new HashMap<Integer, Ticket>();
     }
+
+   public Ticket getCity(int ticketID) {
+        return this.tickets.get(ticketID);
+    }
+
     public void addTicket(Ticket ticket) {
-        this.tickets.add(ticket);
+        this.tickets.put(ticket.getTicketID(), ticket);
     }
-    public Ticket getTicket(int index) {
-        return this.tickets.get(index);
+
+    public void deleteTicket(Ticket ticket) {
+        this.tickets.remove(ticket.getTicketID());
     }
-    public int size() {
-        return this.tickets.size();
-    }
-    public ArrayList<Ticket> getAllTickets() {
+
+    public HashMap<Integer,Ticket> getAllTickets() {
         return this.tickets;
     }
     

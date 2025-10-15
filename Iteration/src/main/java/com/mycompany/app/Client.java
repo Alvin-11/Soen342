@@ -1,13 +1,14 @@
 package com.mycompany.app;
 
+import java.util.UUID;
+
 public class Client {
-    private String clientID;
+    private final String clientID =  UUID.randomUUID().toString();
     private String firstName;
     private String lastName;
     private int age;
 
-    public Client(String clientID, String firstName, String lastName, int age) {
-        this.clientID = clientID;
+    public Client(String firstName, String lastName, int age) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
@@ -23,9 +24,6 @@ public class Client {
     }
     public int getAge() {
         return age;
-    }
-    public void setClientID(String clientID) {
-        this.clientID = clientID;
     }
     public void setFirstName(String firstName) {
         this.firstName = firstName;
