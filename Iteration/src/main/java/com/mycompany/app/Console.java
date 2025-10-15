@@ -231,18 +231,24 @@ public class Console {
         ConsoleFormatter.clearConsole();
     }
 
-    public Ticket reserveTrip(Client client, Trip trip){
+    public Ticket reserveTrip(Client client, Trip trip){ // Reserves a ticket for a client for a specific trip
+        for(Ticket ticket1: trip.getAllTickets()){ // Verifies that a client does not already have a ticket for the trip
+            if(ticket1.getClient().getClientID().equals(client.getClientID())){
+                return null;
+            }
+        }
         Ticket ticket = new Ticket(client, trip);
         ticketCatalog.addTicket(ticket);
+        trip.addTicket(ticket);
         return ticket;
     }
 
-    public Client getClientID(String ID){
+    public Client getClientID(String ID){ // Retrieves a client based on their ID
         Client client = clientCatalog.getClient(ID);
         return client;
     }
     
-    public Trip getTrip(ArrayList<Trip> trips, String ID){
+    public Trip getTrip(ArrayList<Trip> trips, String ID){ // Retrieves a trip based on its ID 
         for(Trip trip: trips){
             if(trip.getTripID().equals(ID)){
                 return trip;
@@ -251,7 +257,7 @@ public class Console {
         return null;
     }
 
-    public Client createClient(String firstName, String lastName, int age){
+    public Client createClient(String firstName, String lastName, int age){ // Creates a new client if such a client does not already exists
         Client client = new Client(firstName, lastName, age);
         clientCatalog.addClient(client);
         return client;
