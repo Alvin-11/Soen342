@@ -9,6 +9,7 @@ public class Trip {
 
     private final String tripID = UUID.randomUUID().toString();
 
+    private ArrayList<Ticket> tickets;
     private City departureCity;
     private City arrivalCity;
     private double firstClassTicketRate;
@@ -244,5 +245,14 @@ public class Trip {
 
     public String getTripID() {
         return tripID;
+    }
+    public ArrayList<Ticket> getAllTickets() {
+        return tickets;
+    }
+    public void addTicket(Ticket ticket) {
+        this.tickets.add(ticket);
+    }
+    public void removeTicket(Ticket ticket) {
+        this.tickets.remove(ticket);
     }
 }
