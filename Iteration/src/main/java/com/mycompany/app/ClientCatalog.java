@@ -22,4 +22,14 @@ public class ClientCatalog {
     public HashMap<String,Client> getAllClients() {
         return this.clients;
     }
+    public Client createClient(String firstName, String lastName, int age){ // Creates a new client if such a client does not already exists
+        Client client = new Client(firstName, lastName, age);
+        addClient(client);
+        return client;
+    }
+    
+    public Client getClientFromID(String ID){ // Retrieves a client based on their ID
+        Client client = getClient(ID);
+        return client;
+    }
 }

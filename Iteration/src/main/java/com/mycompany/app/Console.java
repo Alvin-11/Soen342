@@ -243,12 +243,7 @@ public class Console {
         return ticket;
     }
 
-    public Client getClientID(String ID){ // Retrieves a client based on their ID
-        Client client = clientCatalog.getClient(ID);
-        return client;
-    }
-    
-    public Trip getTrip(ArrayList<Trip> trips, String ID){ // Retrieves a trip based on its ID 
+    private Trip getTrip(ArrayList<Trip> trips, String ID){ // Retrieves a trip based on its ID 
         for(Trip trip: trips){
             if(trip.getTripID().equals(ID)){
                 return trip;
@@ -257,12 +252,6 @@ public class Console {
         return null;
     }
 
-    public Client createClient(String firstName, String lastName, int age){ // Creates a new client if such a client does not already exists
-        Client client = new Client(firstName, lastName, age);
-        clientCatalog.addClient(client);
-        return client;
-    }
-    
     public void addFilePath(String filePath) {
         try (FileReader fileReader = new FileReader(filePath);
                 CSVReader csvReader = new CSVReader(fileReader);) {
