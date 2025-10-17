@@ -231,27 +231,6 @@ public class Console {
         ConsoleFormatter.clearConsole();
     }
 
-    public Ticket reserveTrip(Client client, Trip trip){ // Reserves a ticket for a client for a specific trip
-        for(Ticket ticket1: trip.getAllTickets()){ // Verifies that a client does not already have a ticket for the trip
-            if(ticket1.getClient().getClientID().equals(client.getClientID())){
-                return null;
-            }
-        }
-        Ticket ticket = new Ticket(client, trip);
-        ticketCatalog.addTicket(ticket);
-        trip.addTicket(ticket);
-        return ticket;
-    }
-
-    private Trip getTrip(ArrayList<Trip> trips, String ID){ // Retrieves a trip based on its ID 
-        for(Trip trip: trips){
-            if(trip.getTripID().equals(ID)){
-                return trip;
-            }
-        }
-        return null;
-    }
-
     public void addFilePath(String filePath) {
         try (FileReader fileReader = new FileReader(filePath);
                 CSVReader csvReader = new CSVReader(fileReader);) {

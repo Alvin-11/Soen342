@@ -27,9 +27,4 @@ public class ClientCatalog {
         addClient(client);
         return client;
     }
-    
-    public Client getClientFromID(String ID){ // Retrieves a client based on their ID
-        Client client = getClient(ID);
-        return client;
-    }
 }
