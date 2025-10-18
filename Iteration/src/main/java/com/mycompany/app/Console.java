@@ -14,6 +14,8 @@ public class Console {
     private CityCatalog cityCatalog;
     private ConnectionCatalog connectionCatalog;
     private Search currentSearch;
+    private ClientCatalog clientCatalog;
+    private TicketCatalog ticketCatalog;
 
     private Scanner scanner;
 
@@ -32,7 +34,7 @@ public class Console {
         this.running = true;
 
         // Run csv processing here
-        addFilePath("Iteration_1/src/main/resources/eu_rail_network.csv");
+        addFilePath("Iteration/src/main/resources/eu_rail_network.csv");
 
         ConsoleFormatter.clearConsole();
         ConsoleFormatter.printHeader("Welcome to the European Rail Planning System");
