@@ -37,7 +37,19 @@ public class TicketCatalog {
         return ticket;
     }
 
-     public Trip getTrip(ArrayList<Trip> trips, String ID){ // Retrieves a trip based on its ID 
+    public ArrayList<Ticket> viewTrips(Client client) {
+        ArrayList<Ticket> clientTickets = new ArrayList<Ticket>();
+
+        for (Ticket ticket: this.tickets.values()) {
+            if (ticket.getClient().getClientID().equals(client.getClientID())) {
+                clientTickets.add(ticket);
+            }
+        }
+
+        return clientTickets;
+    }
+
+    public Trip getTrip(ArrayList<Trip> trips, String ID){ // Retrieves a trip based on its ID 
         for(Trip trip: trips){
             if(trip.getTripID().equals(ID)){
                 return trip;

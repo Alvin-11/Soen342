@@ -580,6 +580,19 @@ public class Console {
         }
     }
 
+    public ArrayList<Ticket> viewTrips(String lastName, String clientID) {
+        Client client = this.clientCatalog.getClient(clientID);
+
+        if (client == null) {
+            throw new IllegalArgumentException("Client with the provided ID does not exist.");
+        }
+        else if (!client.getLastName().equalsIgnoreCase(lastName)) {
+            throw new IllegalArgumentException("Client last name does not match the provided client ID.");
+        }
+
+        return this.ticketCatalog.viewTrips(client);
+    }
+
     private void editDepartureCity() {
         ConsoleFormatter.clearConsole();
         ConsoleFormatter.printCenteredLine("Current departure city: " + this.currentSearch.getDepartureCity());
