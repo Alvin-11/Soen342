@@ -1,13 +1,15 @@
 package com.mycompany.app;
 
 import java.util.ArrayList;
-import java.util.UUID;
+
 public class Trip {
+    private static int idCounter = 0;
+
     private static final int MINUTES_PER_HOUR = 60;
     private static final int MINUTES_PER_DAY = MINUTES_PER_HOUR * 24;
     private static final int MINUTES_PER_WEEK = MINUTES_PER_DAY * 7;
 
-    private final String tripID = UUID.randomUUID().toString();
+    private final String tripID;
 
     private ArrayList<Ticket> tickets;
     private City departureCity;
@@ -35,6 +37,8 @@ public class Trip {
     }
 
     public Trip(Connection[] conns, String departureDay, String departureTime) {
+        this.tripID = "T" + (++idCounter);
+        this.tickets = new ArrayList<Ticket>();
         this.connections = new ArrayList<Connection>(conns.length);
         this.firstClassTicketRate = 0;
         this.secondClassTicketRate = 0;
