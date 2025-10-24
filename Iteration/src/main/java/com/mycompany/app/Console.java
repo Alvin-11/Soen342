@@ -13,9 +13,10 @@ public class Console {
 
     private CityCatalog cityCatalog;
     private ConnectionCatalog connectionCatalog;
-    private Search currentSearch;
     private ClientCatalog clientCatalog;
     private TicketCatalog ticketCatalog;
+    private TripCatalog tripCatalog;
+    private Search currentSearch;
 
     private Scanner scanner;
 
@@ -24,6 +25,9 @@ public class Console {
 
         this.cityCatalog = new CityCatalog();
         this.connectionCatalog = new ConnectionCatalog();
+        this.clientCatalog = new ClientCatalog();
+        this.ticketCatalog = new TicketCatalog();
+        this.tripCatalog = new TripCatalog();
         this.currentSearch = new Search();
 
         this.scanner = new Scanner(System.in);
@@ -355,21 +359,42 @@ public class Console {
         for (Connection conn1 : departureCity.outgoingConnections) {
             if (conn1.arrivalCity == arrivalCity) { // Checking that the arrival city of the
                                                    // connection is the same for a direct connection
-                baseTrips.add(new Trip(new Connection[]{conn1}, departureDay, departureTime));
+                Trip trip = tripCatalog.getTrip(Trip.generateTripID(new Connection[]{conn1}, departureDay, departureTime));
+
+                if(trip == null){
+                    trip = new Trip(new Connection[]{conn1}, departureDay, departureTime);
+                    tripCatalog.addTrip(trip);
+                }
+
+                baseTrips.add(trip);
             }
 
             for (Connection conn2 : conn1.arrivalCity.outgoingConnections) {
                 if (conn2.arrivalCity == arrivalCity) { // Checking that the arrival city of the
                                                         // connection is the same for a 1-stop
                                                         // Indirect connection
-                    baseTrips.add(new Trip(new Connection[]{conn1, conn2}, departureDay, departureTime));
+                    Trip trip = tripCatalog.getTrip(Trip.generateTripID(new Connection[]{conn1, conn2}, departureDay, departureTime));
+
+                    if(trip == null){
+                        trip = new Trip(new Connection[]{conn1, conn2}, departureDay, departureTime);
+                        tripCatalog.addTrip(trip);
+                    }
+
+                    baseTrips.add(trip);
                 }
 
                 for (Connection conn3 : conn2.arrivalCity.outgoingConnections) {
                     if (conn3.arrivalCity == arrivalCity) { // Checking that the arrival city of the
                                                             // connection is the same for a 2-stop
                                                             // Indirect connection
-                        baseTrips.add(new Trip(new Connection[]{conn1, conn2, conn3}, departureDay, departureTime));
+                        Trip trip = tripCatalog.getTrip(Trip.generateTripID(new Connection[]{conn1, conn2, conn3}, departureDay, departureTime));
+
+                        if(trip == null){
+                            trip = new Trip(new Connection[]{conn1, conn2, conn3}, departureDay, departureTime);
+                            tripCatalog.addTrip(trip);
+                        }
+
+                        baseTrips.add(trip);
                     }
                 }
             }
