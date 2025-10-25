@@ -1,13 +1,13 @@
 package com.mycompany.app;
 
 import java.util.ArrayList;
-import java.util.UUID;
+
 public class Trip {
     private static final int MINUTES_PER_HOUR = 60;
     private static final int MINUTES_PER_DAY = MINUTES_PER_HOUR * 24;
     private static final int MINUTES_PER_WEEK = MINUTES_PER_DAY * 7;
 
-    private final String tripID = UUID.randomUUID().toString();
+    private final String tripID;
 
     private ArrayList<Ticket> tickets;
     private City departureCity;
@@ -30,11 +30,26 @@ public class Trip {
     // #: travelTime
     // $: changeWaitTime
 
+    public static String generateTripID(Connection[] conns) {
+        return generateTripID(conns, "Monday", "00:00");
+    }
+
+    public static String generateTripID(Connection[] conns, String departureDay, String departureTime) {
+        String id = "T" + departureDay + departureTime;
+
+        for (Connection conn: conns) {
+            id += conn.getRouteID();
+        }
+
+        return id;
+    }
+
     public Trip(Connection[] conns) {
         this(conns, "Monday", "00:00");
     }
 
     public Trip(Connection[] conns, String departureDay, String departureTime) {
+        this.tickets = new ArrayList<Ticket>();
         this.connections = new ArrayList<Connection>(conns.length);
         this.firstClassTicketRate = 0;
         this.secondClassTicketRate = 0;
@@ -133,6 +148,15 @@ public class Trip {
 
             this.connections.add(currConn);
         }
+
+        //compute the tripID
+        String id = "T" + departureDay + departureTime;
+
+        for (Connection conn: connections) {
+            id += conn.getRouteID();
+        }
+
+        this.tripID = id;
     }
 
     public City getDepartureCity() {
@@ -246,12 +270,15 @@ public class Trip {
     public String getTripID() {
         return tripID;
     }
+
     public ArrayList<Ticket> getAllTickets() {
         return tickets;
     }
+
     public void addTicket(Ticket ticket) {
         this.tickets.add(ticket);
     }
+
     public void removeTicket(Ticket ticket) {
         this.tickets.remove(ticket);
     }

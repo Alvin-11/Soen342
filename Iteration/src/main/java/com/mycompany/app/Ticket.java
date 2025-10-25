@@ -1,13 +1,15 @@
 package com.mycompany.app;
-import java.util.Random;
+
 public class Ticket {
-    Random rand = new Random();
-    private final int ticketID = rand.nextInt(10000000);
+    private static int idCounter = 0;
+
+    private final int ticketID;
     private Trip trip;
     private Client client;
 
 
     public Ticket(Client client, Trip trip) {
+        this.ticketID = ++idCounter;
         this.trip = trip;
         this.client = client;
 

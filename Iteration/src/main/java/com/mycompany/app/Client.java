@@ -1,14 +1,15 @@
 package com.mycompany.app;
 
-import java.util.UUID;
-
 public class Client {
-    private final String clientID =  UUID.randomUUID().toString();
+    private static int idCounter = 0;
+
+    private final String clientID;
     private String firstName;
     private String lastName;
     private int age;
 
     public Client(String firstName, String lastName, int age) {
+        this.clientID = "C" + (++idCounter);
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
