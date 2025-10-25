@@ -269,7 +269,6 @@ public class Console {
         ConsoleFormatter.printCenteredLine("Selected Trip Details");
         ConsoleFormatter.printSeperatorLine();
         ConsoleFormatter.printTrip(selectedTrip);
-        ConsoleFormatter.printSeperatorLine();
 
         ConsoleFormatter.printPrompt("Confirm booking this trip? (y/n): ");
         String confirm = scanner.nextLine().trim().toLowerCase();
@@ -330,7 +329,7 @@ public class Console {
                     return;
                 }
 
-                client = clientCatalog.getClient(id);
+                client = clientCatalog.getClientByPassportID(id);
                 if (client == null) {
                     ConsoleFormatter.printBoxedLine("Account not found with that ID. Please create a new account.");
                     ConsoleFormatter.printPrompt("Press Enter to continue and create new account...");
@@ -378,12 +377,12 @@ public class Console {
             }
 
             // Check if ID already exists for new account creation
-            Client existingClient = clientCatalog.getClient(id);
+            Client existingClient = clientCatalog.getClientByPassportID(id);
             if (existingClient != null) {
                 ConsoleFormatter.printBoxedLine("An account with this ID already exists. Using existing account.");
                 client = existingClient;
             } else {
-                client = clientCatalog.createClient(firstName, lastName, age);
+                client = clientCatalog.createClient(firstName, lastName, age, id);
                 ConsoleFormatter.printBoxedLine("New account created successfully!");
             }
 
@@ -451,8 +450,8 @@ public class Console {
                 ConsoleFormatter.printSeperatorLine();
 
                 // Print table header
-                System.out.printf("%-12s %-20s %-25s %-16s %-16s %-8s%n",
-                    "Ticket ID", "Passenger", "Route", "Departure", "Arrival", "Duration");
+                System.out.printf("%-8s %-20s %-25s %-16s %-16s %-8s%n",
+                    "Trip ID", "Passenger", "Route", "Departure", "Arrival", "Duration");
                 ConsoleFormatter.printSeperatorLine();
 
                 // Print each in a row
@@ -472,8 +471,8 @@ public class Console {
                     if (departure.length() > 16) departure = departure.substring(0, 13) + "...";
                     if (arrival.length() > 16) arrival = arrival.substring(0, 13) + "...";
                     
-                    System.out.printf("%-12s %-20s %-25s %-16s %-16s %-8s%n",
-                        ticket.getTicketID(), passengerName, route, departure, arrival, duration);
+                    System.out.printf("%-8s %-20s %-25s %-16s %-16s %-8s%n",
+                        trip.getTripID(), passengerName, route, departure, arrival, duration);
                 }
                 
                 ConsoleFormatter.printSeperatorLine();
@@ -613,14 +612,8 @@ public class Console {
         for (Connection conn1 : departureCity.outgoingConnections) {
             if (conn1.arrivalCity == arrivalCity) { // Checking that the arrival city of the
                                                     // connection is the same for a direct connection
-                Trip trip = tripCatalog
-                        .getTrip(Trip.generateTripID(new Connection[] { conn1 }, departureDay, departureTime));
-
-                if (trip == null) {
-                    trip = new Trip(new Connection[] { conn1 }, departureDay, departureTime);
-                    tripCatalog.addTrip(trip);
-                }
-
+                Trip trip = new Trip(new Connection[] { conn1 }, departureDay, departureTime);
+                tripCatalog.addTrip(trip);
                 baseTrips.add(trip);
             }
 
@@ -628,14 +621,8 @@ public class Console {
                 if (conn2.arrivalCity == arrivalCity) { // Checking that the arrival city of the
                                                         // connection is the same for a 1-stop
                                                         // Indirect connection
-                    Trip trip = tripCatalog.getTrip(
-                            Trip.generateTripID(new Connection[] { conn1, conn2 }, departureDay, departureTime));
-
-                    if (trip == null) {
-                        trip = new Trip(new Connection[] { conn1, conn2 }, departureDay, departureTime);
-                        tripCatalog.addTrip(trip);
-                    }
-
+                    Trip trip = new Trip(new Connection[] { conn1, conn2 }, departureDay, departureTime);
+                    tripCatalog.addTrip(trip);
                     baseTrips.add(trip);
                 }
 
@@ -643,14 +630,8 @@ public class Console {
                     if (conn3.arrivalCity == arrivalCity) { // Checking that the arrival city of the
                                                             // connection is the same for a 2-stop
                                                             // Indirect connection
-                        Trip trip = tripCatalog.getTrip(Trip.generateTripID(new Connection[] { conn1, conn2, conn3 },
-                                departureDay, departureTime));
-
-                        if (trip == null) {
-                            trip = new Trip(new Connection[] { conn1, conn2, conn3 }, departureDay, departureTime);
-                            tripCatalog.addTrip(trip);
-                        }
-
+                        Trip trip = new Trip(new Connection[] { conn1, conn2, conn3 }, departureDay, departureTime);
+                        tripCatalog.addTrip(trip);
                         baseTrips.add(trip);
                     }
                 }
@@ -866,7 +847,7 @@ public class Console {
     }
 
     public ArrayList<Ticket> viewTrips(String lastName, String clientID) {
-        Client client = this.clientCatalog.getClient(clientID);
+        Client client = this.clientCatalog.getClientByPassportID(clientID);
 
         if (client == null) {
             throw new IllegalArgumentException("Client with the provided ID does not exist.");
@@ -1380,7 +1361,7 @@ public class Console {
                 15, // 2nd Class Rate
                 14, // Trip Duration
                 10, // Wait Time
-                14  // Trip ID
+                8   // Trip ID (reduced from 14 to 8 for numeric IDs)
         };
 
         private static final int SEPARTOR_WIDTH = Arrays.stream(COLUMN_WIDTHS).sum() + COLUMN_WIDTHS.length - 1;

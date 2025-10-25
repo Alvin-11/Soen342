@@ -7,6 +7,8 @@ public class Trip {
     private static final int MINUTES_PER_DAY = MINUTES_PER_HOUR * 24;
     private static final int MINUTES_PER_WEEK = MINUTES_PER_DAY * 7;
 
+    private static int nextTripId = 1000; // Start from 1000 for cleaner IDs
+
     private final String tripID;
 
     private ArrayList<Ticket> tickets;
@@ -29,20 +31,6 @@ public class Trip {
     // *: initialWaitTime
     // #: travelTime
     // $: changeWaitTime
-
-    public static String generateTripID(Connection[] conns) {
-        return generateTripID(conns, "Monday", "00:00");
-    }
-
-    public static String generateTripID(Connection[] conns, String departureDay, String departureTime) {
-        String id = "T" + departureDay + departureTime;
-
-        for (Connection conn: conns) {
-            id += conn.getRouteID();
-        }
-
-        return id;
-    }
 
     public Trip(Connection[] conns) {
         this(conns, "Monday", "00:00");
@@ -149,14 +137,8 @@ public class Trip {
             this.connections.add(currConn);
         }
 
-        //compute the tripID
-        String id = "T" + departureDay + departureTime;
-
-        for (Connection conn: connections) {
-            id += conn.getRouteID();
-        }
-
-        this.tripID = id;
+        // Generate simple numeric tripID
+        this.tripID = String.valueOf(nextTripId++);
     }
 
     public City getDepartureCity() {
@@ -269,6 +251,14 @@ public class Trip {
 
     public String getTripID() {
         return tripID;
+    }
+
+    public static void resetIdCounter() {
+        nextTripId = 1000;
+    }
+
+    public static int getNextTripId() {
+        return nextTripId;
     }
 
     public ArrayList<Ticket> getAllTickets() {

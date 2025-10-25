@@ -7,12 +7,22 @@ public class Client {
     private String firstName;
     private String lastName;
     private int age;
+    private String passportStateID; // User's passport/state ID
 
     public Client(String firstName, String lastName, int age) {
         this.clientID = "C" + (++idCounter);
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
+        this.passportStateID = null; // Will be set when needed
+    }
+
+    public Client(String firstName, String lastName, int age, String passportStateID) {
+        this.clientID = "C" + (++idCounter);
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.passportStateID = passportStateID;
     }
     public String getClientID() {
         return clientID;
@@ -26,6 +36,9 @@ public class Client {
     public int getAge() {
         return age;
     }
+    public String getPassportStateID() {
+        return passportStateID;
+    }
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -34,5 +47,8 @@ public class Client {
     }
     public void setAge(int age) {
         this.age = age;
+    }
+    public void setPassportStateID(String passportStateID) {
+        this.passportStateID = passportStateID;
     }
 }
