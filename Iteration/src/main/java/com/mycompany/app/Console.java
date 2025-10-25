@@ -97,6 +97,9 @@ public class Console {
                 case "b":
                     bookTrip();
                     break;
+                case "v":
+                    viewMyTrips();
+                    break;
                 default:
                     ConsoleFormatter.printSeperatorLine();
                     ConsoleFormatter.printBoxedLine("Please select a valid option");
@@ -418,6 +421,72 @@ public class Console {
             ConsoleFormatter.printPrompt("Press Enter to continue...");
             scanner.nextLine();
         }
+    }
+
+    public void viewMyTrips() {
+        ConsoleFormatter.clearConsole();
+        ConsoleFormatter.printHeader("View My Trips");
+
+        ConsoleFormatter.printPrompt("Enter your last name: ");
+        String lastName = scanner.nextLine().trim();
+
+        ConsoleFormatter.printPrompt("Enter your ID (passport/state ID): ");
+        String clientID = scanner.nextLine().trim();
+
+        if (lastName.isEmpty() || clientID.isEmpty()) {
+            ConsoleFormatter.printBoxedLine("Both last name and ID are required.");
+            ConsoleFormatter.printPrompt("Press Enter to continue...");
+            scanner.nextLine();
+            return;
+        }
+
+        try {
+            ArrayList<Ticket> userTickets = viewTrips(lastName, clientID);
+
+            if (userTickets.isEmpty()) {
+                ConsoleFormatter.printBoxedLine("No trips found for the provided information.");
+            } else {
+                ConsoleFormatter.printSeperatorLine();
+                ConsoleFormatter.printCenteredLine("Your Booked Trips (" + userTickets.size() + " total)");
+                ConsoleFormatter.printSeperatorLine();
+
+                // Print table header
+                System.out.printf("%-12s %-20s %-25s %-16s %-16s %-8s%n",
+                    "Ticket ID", "Passenger", "Route", "Departure", "Arrival", "Duration");
+                ConsoleFormatter.printSeperatorLine();
+
+                // Print each in a row
+                for (Ticket ticket : userTickets) {
+                    Trip trip = ticket.getTrip();
+                    Client client = ticket.getClient();
+                    
+                    String passengerName = client.getFirstName() + " " + client.getLastName();
+                    String route = trip.getDepartureCity().getCityName() + " → " + trip.getArrivalCity().getCityName();
+                    String departure = trip.getDepartureDate();
+                    String arrival = trip.getArrivalDate();
+                    String duration = trip.getDurationTime() + "m";
+                    
+                    // Shorten long strings
+                    if (passengerName.length() > 20) passengerName = passengerName.substring(0, 17) + "...";
+                    if (route.length() > 25) route = route.substring(0, 22) + "...";
+                    if (departure.length() > 16) departure = departure.substring(0, 13) + "...";
+                    if (arrival.length() > 16) arrival = arrival.substring(0, 13) + "...";
+                    
+                    System.out.printf("%-12s %-20s %-25s %-16s %-16s %-8s%n",
+                        ticket.getTicketID(), passengerName, route, departure, arrival, duration);
+                }
+                
+                ConsoleFormatter.printSeperatorLine();
+            }
+
+        } catch (IllegalArgumentException e) {
+            ConsoleFormatter.printBoxedLine("Error: " + e.getMessage());
+        } catch (Exception e) {
+            ConsoleFormatter.printBoxedLine("An error occurred while retrieving your trips.");
+        }
+
+        ConsoleFormatter.printPrompt("Press Enter to continue...");
+        scanner.nextLine();
     }
 
     public void addFilePath(String filePath) {
@@ -1338,6 +1407,7 @@ public class Console {
             printBoxedLine("R. Reset Search");
             printBoxedLine("S. Run Search");
             printBoxedLine("B. Book Trip");
+            printBoxedLine("V. View My Trips");
             printBoxedLine("0. Exit");
             printSeperatorLine();
             printPrompt("Enter your selection: ");
