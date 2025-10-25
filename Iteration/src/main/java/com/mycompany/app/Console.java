@@ -310,6 +310,37 @@ public class Console {
             ConsoleFormatter.printCenteredLine("Traveler " + (i + 1) + " Information");
             ConsoleFormatter.printSeperatorLine();
 
+            ConsoleFormatter.printPrompt("Do you already have an account? (y/n): ");
+            String hasAccount = scanner.nextLine().trim().toLowerCase();
+
+            Client client = null;
+
+            if (hasAccount.equals("y") || hasAccount.equals("yes")) {
+                // Existing account - just need ID
+                ConsoleFormatter.printPrompt("Enter your ID (passport/state ID): ");
+                String id = scanner.nextLine().trim();
+
+                if (id.isEmpty()) {
+                    ConsoleFormatter.printBoxedLine("ID is required.");
+                    ConsoleFormatter.printPrompt("Press Enter to continue...");
+                    scanner.nextLine();
+                    return;
+                }
+
+                client = clientCatalog.getClient(id);
+                if (client == null) {
+                    ConsoleFormatter.printBoxedLine("Account not found with that ID. Please create a new account.");
+                    ConsoleFormatter.printPrompt("Press Enter to continue and create new account...");
+                    scanner.nextLine();
+                    // Fall through to create new account
+                } else {
+                    ConsoleFormatter.printBoxedLine("Welcome back, " + client.getFirstName() + " " + client.getLastName() + "!");
+                    travelers.add(client);
+                    continue; // Skip to next traveler
+                }
+            }
+
+            // New account or account not found - collect full information
             ConsoleFormatter.printPrompt("Enter first name: ");
             String firstName = scanner.nextLine().trim();
 
@@ -343,10 +374,14 @@ public class Console {
                 return;
             }
 
-            Client client = clientCatalog.getClient(id);
-            if (client == null) {
-                client = new Client(firstName, lastName, age);
-                clientCatalog.addClient(client);
+            // Check if ID already exists for new account creation
+            Client existingClient = clientCatalog.getClient(id);
+            if (existingClient != null) {
+                ConsoleFormatter.printBoxedLine("An account with this ID already exists. Using existing account.");
+                client = existingClient;
+            } else {
+                client = clientCatalog.createClient(firstName, lastName, age);
+                ConsoleFormatter.printBoxedLine("New account created successfully!");
             }
 
             travelers.add(client);
@@ -356,8 +391,7 @@ public class Console {
             ArrayList<Ticket> tickets = new ArrayList<>();
 
             for (Client traveler : travelers) {
-                Ticket ticket = new Ticket(traveler, selectedTrip);
-                ticketCatalog.addTicket(ticket);
+                Ticket ticket = ticketCatalog.reserveTrip(traveler, selectedTrip);
                 tickets.add(ticket);
             }
 
@@ -1502,7 +1536,7 @@ public class Console {
             printTableCell(trip.getWaitTimeDuration(), COLUMN_WIDTHS[9]);
 
             // print trip id
-            printTableCell(trip.getTripID(), COLUMN_WIDTHS[8]);
+            printTableCell(trip.getTripID(), COLUMN_WIDTHS[10]);
 
             // repeat train type and days of operation for each connection
             for (int i = 1; i < conns.size(); i++) {
