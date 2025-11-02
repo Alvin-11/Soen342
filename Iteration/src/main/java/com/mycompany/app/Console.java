@@ -24,7 +24,7 @@ public class Console {
         this.running = false;
 
         this.cityCatalog = new CityCatalog();
-        this.connectionCatalog = new ConnectionCatalog();
+        this.connectionCatalog = new ConnectionCatalog(this.cityCatalog);
         this.clientCatalog = new ClientCatalog();
         this.ticketCatalog = new TicketCatalog();
         this.tripCatalog = new TripCatalog();
@@ -506,85 +506,17 @@ public class Console {
                 String departureTime = row[3];
                 String arrivalTime = row[4];
                 String trainType = row[5];
-                ArrayList<String> daysOfOperation = DaysOfOperationStringProcessing(row[6]);
+                String daysOfOperation = row[6];
                 double firstClassTicketRate = Double.parseDouble(row[7]);
                 double secondClassTicketRate = Double.parseDouble(row[8]);
 
-                // check if the departure and arrival cities already exist
-                City departureCity = cityCatalog.getCity(departureCityName);
-                City arrivalCity = cityCatalog.getCity(arrivalCityName);
-
-                if (departureCity == null) {
-                    departureCity = new City(departureCityName);
-                    cityCatalog.addCity(departureCity);
+                if (connectionCatalog.getConnection(routeID) == null) {
+                    connectionCatalog.createConnection(routeID, departureCityName, arrivalCityName, departureTime, arrivalTime, trainType, daysOfOperation, firstClassTicketRate, secondClassTicketRate);
                 }
-
-                if (arrivalCity == null) {
-                    arrivalCity = new City(arrivalCityName);
-                    cityCatalog.addCity(arrivalCity);
-                }
-                // create the Connection object and add it to the catalog
-                Connection conn = new Connection(routeID, departureCity, arrivalCity, departureTime, arrivalTime,
-                        trainType, daysOfOperation, firstClassTicketRate, secondClassTicketRate);
-                connectionCatalog.addConnection(conn);
-
-                // add the connection to the incoming connections of the arrival city
-                arrivalCity.incomingConnections.add(conn);
-
-                // add the connection to the outgoing connections of the departure city
-                departureCity.outgoingConnections.add(conn);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public ArrayList<String> DaysOfOperationStringProcessing(String daysOfOperation) {
-        String[] DaysInAWeek = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
-        String[] DaysInaWeekShortened = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
-        ArrayList<String> daysofOperation1 = new ArrayList<String>();
-        if (daysOfOperation.equalsIgnoreCase("Daily")) {
-            for (String day : DaysInAWeek) {
-                daysofOperation1.add(day);
-            }
-        } else {
-            String[] days = daysOfOperation.split(",");
-            for (String data : days) {
-                if (data.length() < 6) {
-                    for (int i = 0; i < 7; i++) {
-                        if (data.equalsIgnoreCase(DaysInaWeekShortened[i])) {
-                            daysofOperation1.add(DaysInAWeek[i]);
-                        }
-                    }
-                } else if (data.length() == 7) {
-                    String[] dayStrings = data.split("-");
-                    int startIndex = 0;
-                    int endIndex = 0;
-                    for (int i = 0; i < 7; i++) {
-                        if (dayStrings[0].equalsIgnoreCase(DaysInaWeekShortened[i])) {
-                            startIndex = i;
-                        }
-                        if (dayStrings[1].equalsIgnoreCase(DaysInaWeekShortened[i])) {
-                            endIndex = i;
-                        }
-                    }
-                    if (startIndex <= endIndex) {
-                        for (int i = startIndex; i < endIndex + 1; i++) {
-                            daysofOperation1.add(DaysInAWeek[i]);
-
-                        }
-                    } else if (endIndex < startIndex) {
-                        for (int i = 0; i < 7; i++) {
-                            if (i <= endIndex || i >= startIndex) {
-                                daysofOperation1.add(DaysInAWeek[i]);
-                            }
-
-                        }
-                    }
-                }
-            }
-        }
-        return daysofOperation1;
     }
 
     // This method essentials loops through the cities and their connections to find
@@ -712,7 +644,7 @@ public class Console {
                                                                                                    // days of operation
                                                                                                    // provided by the
         ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
-        ArrayList<String> daysOfOperationList = DaysOfOperationStringProcessing(daysOfOperation);
+        ArrayList<String> daysOfOperationList = ConnectionCatalog.daysOfOperationStringProcessing(daysOfOperation);
         for (Trip trip1 : trip) {
             boolean valid = true;
             for (Connection conn : trip1.getConnections()) { // Goes through all the connections (1 to 3 connections per
