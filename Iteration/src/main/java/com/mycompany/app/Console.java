@@ -1,6 +1,7 @@
 package com.mycompany.app;
 
 import java.io.FileReader;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -26,8 +27,8 @@ public class Console {
         this.cityCatalog = new CityCatalog();
         this.connectionCatalog = new ConnectionCatalog(this.cityCatalog);
         this.clientCatalog = new ClientCatalog();
-        this.ticketCatalog = new TicketCatalog();
         this.tripCatalog = new TripCatalog();
+         this.ticketCatalog = new TicketCatalog(this.clientCatalog, this.tripCatalog);
         this.currentSearch = new Search();
 
         this.scanner = new Scanner(System.in);
@@ -256,7 +257,7 @@ public class Console {
             return;
         }
 
-        Trip selectedTrip = tripCatalog.getTrip(tripId);
+        Trip selectedTrip = tripCatalog.getTrip(Integer.parseInt(tripId));
 
         if (selectedTrip == null) {
             ConsoleFormatter.printBoxedLine("Trip ID not found. Please run a search first to get valid Trip IDs.");
@@ -554,8 +555,9 @@ public class Console {
                                                         // connection is the same for a 1-stop
                                                         // Indirect connection
                     Trip trip = new Trip(new Connection[] { conn1, conn2 }, departureDay, departureTime);
+                    if((trip.getChangeWaitTime()-trip.getInitialWaitTime()) < (12*60)){// Making sure the layover is less than 12 hours
                     tripCatalog.addTrip(trip);
-                    baseTrips.add(trip);
+                    baseTrips.add(trip);}
                 }
 
                 for (Connection conn3 : conn2.arrivalCity.outgoingConnections) {
@@ -563,8 +565,9 @@ public class Console {
                                                             // connection is the same for a 2-stop
                                                             // Indirect connection
                         Trip trip = new Trip(new Connection[] { conn1, conn2, conn3 }, departureDay, departureTime);
+                         if((trip.getChangeWaitTime()-trip.getInitialWaitTime()) < (24*60)){ // Making sure the layover is less than 24 hours
                         tripCatalog.addTrip(trip);
-                        baseTrips.add(trip);
+                        baseTrips.add(trip);}
                     }
                 }
             }
@@ -578,10 +581,10 @@ public class Console {
                                                                                        // provided by the user
         ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
         for (Trip trip1 : trip) {
-            boolean valid = true;
-            for (Connection conn : trip1.getConnections()) {
-                if (!conn.trainType.equals(trainType)) {
-                    valid = false;
+            boolean valid = false;
+            for (Connection conn : trip1.getConnections()) {// This checks if there is at least one train that matches the train type
+                if (conn.trainType.equals(trainType)) {
+                    valid = true;
                     break;
                 }
             }
@@ -672,7 +675,7 @@ public class Console {
                                                                          // day of the first connection matches the user
         ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
         for (Trip trip1 : trip) {
-            if (trip1.getInitialWaitTime() <= 0) {
+            if (trip1.getInitialWaitTime() <= (60*24)) { // Give out the trips that depart from the departure time with a delay of 24 hours
                 filteredTrips.add(trip1);
             }
         }
@@ -693,9 +696,17 @@ public class Console {
                                                                                                               // the
                                                                                                               // user
         ArrayList<Trip> filteredTrips = new ArrayList<Trip>();
-        for (Trip trip1 : trip) {
+        ArrayList<String> days = new ArrayList<>(Arrays.asList(
+            "monday", "tuesday", "wednesday", 
+            "thursday", "friday", "saturday", "sunday"
+        ));
+       
+        for (Trip trip1 : trip) { // Will give out the trips that arrive wither a day in advance of the arrivalday that was given or the exact same day
             String arrivalDate = trip1.getArrivalDate().toLowerCase();
-            if (arrivalDate.contains(ArrivalDay.toLowerCase()) && arrivalDate.contains(ArrivalTime.toLowerCase())) {
+            if(arrivalDate.contains(days.get((days.indexOf(ArrivalDay.toLowerCase())+13)%7).toLowerCase())){
+                filteredTrips.add(trip1);
+            }
+            else if (arrivalDate.contains(ArrivalDay.toLowerCase())) {
                 filteredTrips.add(trip1);
             }
         }
@@ -1519,7 +1530,7 @@ public class Console {
             printTableCell(trip.getWaitTimeDuration(), COLUMN_WIDTHS[9]);
 
             // print trip id
-            printTableCell(trip.getTripID(), COLUMN_WIDTHS[10]);
+            printTableCell(String.valueOf(trip.getTripID()), COLUMN_WIDTHS[10]);
 
             // repeat train type and days of operation for each connection
             for (int i = 1; i < conns.size(); i++) {

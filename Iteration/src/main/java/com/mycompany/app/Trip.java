@@ -9,7 +9,7 @@ public class Trip {
 
     private static int nextTripId = 1000; // Start from 1000 for cleaner IDs
 
-    private final String tripID;
+    private final int tripID;
 
     private ArrayList<Ticket> tickets;
     private City departureCity;
@@ -138,7 +138,7 @@ public class Trip {
         }
 
         // Generate simple numeric tripID
-        this.tripID = String.valueOf(nextTripId++);
+        this.tripID = nextTripId++;
     }
 
     public City getDepartureCity() {
@@ -249,7 +249,7 @@ public class Trip {
         return (days > 0 ? days + "d " : "") + hours + "h " + minutes + "m";
     }
 
-    public String getTripID() {
+    public int getTripID() {
         return tripID;
     }
 

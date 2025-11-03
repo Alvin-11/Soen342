@@ -3,13 +3,13 @@ package com.mycompany.app;
 import java.util.HashMap;
 
 public class TripCatalog {
-    HashMap<String, Trip> trips;
+    HashMap<Integer, Trip> trips;
 
     public TripCatalog() {
-        this.trips = new HashMap<String, Trip>();
+        this.trips = new HashMap<Integer, Trip>();
     }
 
-    public Trip getTrip(String tripID) {
+    public Trip getTrip(int tripID) {
         return this.trips.get(tripID);
     }
 

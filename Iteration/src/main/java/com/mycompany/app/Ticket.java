@@ -3,7 +3,7 @@ package com.mycompany.app;
 public class Ticket {
     private static int idCounter = 0;
 
-    private final int ticketID;
+    private int ticketID;
     private Trip trip;
     private Client client;
 
@@ -16,6 +16,9 @@ public class Ticket {
     }
     public int getTicketID() {
         return ticketID;
+    }
+    public void setTicketID(int ticketID) {
+        this.ticketID = ticketID;
     }
     public Trip getTrip() {
         return trip;
