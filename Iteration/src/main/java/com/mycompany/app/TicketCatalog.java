@@ -45,7 +45,7 @@ public class TicketCatalog {
                     Ticket ticket = new Ticket(client,trip);
                     ticket.setTicketID(ticketID);
                     this.tickets.put(ticketID, ticket);
-                    this.trips.getTrip(trip.getTripID()).addTicket(ticket);
+                    trip.addTicket(ticket);
                     
                 }
 

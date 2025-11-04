@@ -555,7 +555,7 @@ public class Console {
                                                         // connection is the same for a 1-stop
                                                         // Indirect connection
                     Trip trip = new Trip(new Connection[] { conn1, conn2 }, departureDay, departureTime);
-                    if((trip.getChangeWaitTime()-trip.getInitialWaitTime()) < (12*60)){// Making sure the layover is less than 12 hours
+                    if((trip.getChangeWaitTime()) < (18*60)){// Making sure the layover is less than 12 hours
                     tripCatalog.addTrip(trip);
                     baseTrips.add(trip);}
                 }
@@ -565,7 +565,7 @@ public class Console {
                                                             // connection is the same for a 2-stop
                                                             // Indirect connection
                         Trip trip = new Trip(new Connection[] { conn1, conn2, conn3 }, departureDay, departureTime);
-                         if((trip.getChangeWaitTime()-trip.getInitialWaitTime()) < (24*60)){ // Making sure the layover is less than 24 hours
+                         if((trip.getChangeWaitTime()) < (36*60)){ // Making sure the layover is less than 24 hours
                         tripCatalog.addTrip(trip);
                         baseTrips.add(trip);}
                     }
