@@ -7,9 +7,14 @@ public class Ticket {
     private Trip trip;
     private Client client;
 
-
     public Ticket(Client client, Trip trip) {
         this.ticketID = ++idCounter;
+        this.trip = trip;
+        this.client = client;
+
+    }
+    public Ticket(int ticketID,Client client, Trip trip) {
+        this.ticketID = ticketID;
         this.trip = trip;
         this.client = client;
 
@@ -28,6 +33,12 @@ public class Ticket {
     }
     public void setClient(Client client) {
         this.client = client;
+    }
+    public static void setIdCounter(int idCounter) {
+        Ticket.idCounter = idCounter;
+    }
+    public static void incrementIdCounter() {
+        Ticket.idCounter =+ 1;
     }
         
 }

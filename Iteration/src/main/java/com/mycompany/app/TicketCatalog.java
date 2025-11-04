@@ -1,12 +1,64 @@
 package com.mycompany.app;
+import java.security.InvalidParameterException;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TicketCatalog {
     private HashMap<Integer,Ticket> tickets;
+    private ClientCatalog clients;
+    private TripCatalog trips;
 
-    public TicketCatalog() {
-       this.tickets = new HashMap<Integer, Ticket>();
+    public TicketCatalog(ClientCatalog clients, TripCatalog trips) {
+        this.clients = clients;
+        this.trips = trips;
+        this.tickets = new HashMap<Integer, Ticket>();
+
+        try (java.sql.Connection conn = DriverManager.getConnection(Constants.DB_PATH)) {
+            
+            if (conn != null) {
+                // create the connections table in the database if it doesn't exist
+                Statement statement = conn.createStatement();
+                statement.execute(
+                    "CREATE TABLE IF NOT EXISTS Tickets (" +
+                    "ticketID INTEGER PRIMARY KEY," +
+                    "client TEXT," +
+                    "trip INTEGER," +
+                    "FOREIGN KEY(client) REFERENCES Clients(clientID)," +
+                    "FOREIGN KEY(trip) REFERENCES Trips(tripID)" +
+                    ")"
+                );
+
+                // load the connections from the database
+                ResultSet res = statement.executeQuery("SELECT * FROM Tickets;");
+
+                while (res.next()) {
+                    // unpack the table row
+                     int ticketID = res.getInt("ticketID");
+                     Trip trip = trips.getTrip(res.getInt("trip"));
+                     Client client = clients.getClient(res.getString("client"));
+                
+                    // create the ticket
+                    Ticket ticket = new Ticket(ticketID,client,trip);
+                    this.tickets.put(ticketID, ticket);
+                    trip.addTicket(ticket);
+                    Ticket.incrementIdCounter();
+                    
+                }
+
+                statement.close();
+                res.close();
+            }
+            else {
+                throw new Exception("ERROR: Unable to connect to database.");
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
    public Ticket getTicket(int ticketID) {
@@ -31,9 +83,40 @@ public class TicketCatalog {
                 return null;
             }
         }
+
         Ticket ticket = new Ticket(client, trip);
         addTicket(ticket);
         trip.addTicket(ticket);
+
+ 
+
+        // connect to the database
+        try (java.sql.Connection conn = DriverManager.getConnection(Constants.DB_PATH)) {
+
+            if (conn != null) {
+                // add the city to the database
+                PreparedStatement statement = conn.prepareStatement(
+                    "INSERT INTO Tickets (" +
+                    "ticketID," +
+                    "client," +
+                    "trip" +
+                    ") VALUES (?, ?, ?);"
+                );
+                statement.setInt(1, ticket.getTicketID());
+                statement.setString(2, client.getClientID());
+                statement.setInt(3, trip.getTripID());
+                statement.executeUpdate();
+                statement.close();
+            }
+            else {
+                throw new Exception("ERROR: Unable to connect to database.");
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        
+        
         return ticket;
     }
 
@@ -49,9 +132,9 @@ public class TicketCatalog {
         return clientTickets;
     }
 
-    public Trip getTrip(ArrayList<Trip> trips, String ID){ // Retrieves a trip based on its ID 
+    public Trip getTrip(ArrayList<Trip> trips, int ID){ // Retrieves a trip based on its ID 
         for(Trip trip: trips){
-            if(trip.getTripID().equals(ID)){
+            if(trip.getTripID()== (ID)){
                 return trip;
             }
         }
