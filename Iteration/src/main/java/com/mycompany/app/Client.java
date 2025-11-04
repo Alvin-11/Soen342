@@ -24,6 +24,22 @@ public class Client {
         this.age = age;
         this.passportStateID = passportStateID;
     }
+
+    // When reading from DB
+    public Client(String clientID, String firstName, String lastName, int age, String passportStateID) {
+        this.clientID = clientID;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
+        this.passportStateID = passportStateID;
+    }
+
+    public static void setIdCounter(int value) {
+        if (value >= idCounter) {
+            idCounter = value;
+        }
+    }
+
     public String getClientID() {
         return clientID;
     }

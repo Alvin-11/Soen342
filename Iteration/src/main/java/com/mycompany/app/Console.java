@@ -18,6 +18,7 @@ public class Console {
     private TicketCatalog ticketCatalog;
     private TripCatalog tripCatalog;
     private Search currentSearch;
+    private final static boolean debug = Boolean.getBoolean("debug");
 
     private Scanner scanner;
 
@@ -1441,6 +1442,7 @@ public class Console {
         }
 
         private static void clearConsole() {
+            if (debug) return;
             try {
                 // Windows implementation
                 if (System.getProperty("os.name").contains("Windows")) {

@@ -42,10 +42,10 @@ public class TicketCatalog {
                      Client client = clients.getClient(res.getString("client"));
                 
                     // create the ticket
-                    Ticket ticket = new Ticket(client,trip);
-                    ticket.setTicketID(ticketID);
+                    Ticket ticket = new Ticket(ticketID,client,trip);
                     this.tickets.put(ticketID, ticket);
                     trip.addTicket(ticket);
+                    Ticket.incrementIdCounter();
                     
                 }
 
