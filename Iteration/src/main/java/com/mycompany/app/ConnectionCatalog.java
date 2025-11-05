@@ -124,7 +124,7 @@ public class ConnectionCatalog {
         try (java.sql.Connection conn = DriverManager.getConnection(Constants.DB_PATH)) {
 
             if (conn != null) {
-                // add the city to the database
+                // add the connection to the database
                 PreparedStatement statement = conn.prepareStatement(
                     "INSERT INTO Connections (" +
                     "routeID," +

@@ -1,7 +1,6 @@
 package com.mycompany.app;
 
 import java.io.FileReader;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -28,8 +27,8 @@ public class Console {
         this.cityCatalog = new CityCatalog();
         this.connectionCatalog = new ConnectionCatalog(this.cityCatalog);
         this.clientCatalog = new ClientCatalog();
-        this.tripCatalog = new TripCatalog();
-         this.ticketCatalog = new TicketCatalog(this.clientCatalog, this.tripCatalog);
+        this.tripCatalog = new TripCatalog(connectionCatalog);
+        this.ticketCatalog = new TicketCatalog(this.clientCatalog, this.tripCatalog);
         this.currentSearch = new Search();
 
         this.scanner = new Scanner(System.in);

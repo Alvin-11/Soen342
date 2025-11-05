@@ -37,6 +37,14 @@ public class Trip {
     }
 
     public Trip(Connection[] conns, String departureDay, String departureTime) {
+        // Generate simple numeric tripID
+        this(nextTripId++, conns, departureDay, departureTime);
+    }
+
+    public Trip(int id, Connection[] conns, String departureDay, String departureTime) {
+        this.tripID = id;
+        Trip.nextTripId = Integer.max(id + 1, nextTripId);
+
         this.tickets = new ArrayList<Ticket>();
         this.connections = new ArrayList<Connection>(conns.length);
         this.firstClassTicketRate = 0;
@@ -136,9 +144,6 @@ public class Trip {
 
             this.connections.add(currConn);
         }
-
-        // Generate simple numeric tripID
-        this.tripID = nextTripId++;
     }
 
     public City getDepartureCity() {
@@ -251,14 +256,6 @@ public class Trip {
 
     public int getTripID() {
         return tripID;
-    }
-
-    public static void resetIdCounter() {
-        nextTripId = 1000;
-    }
-
-    public static int getNextTripId() {
-        return nextTripId;
     }
 
     public ArrayList<Ticket> getAllTickets() {

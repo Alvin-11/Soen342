@@ -41,7 +41,7 @@ public class ClientCatalog {
 
                     Client client = new Client(clientID, firstName, lastName, age, passportStateID);
                     addClient(client);
-                    System.out.println(lastName);
+                    // System.out.println(lastName);
 
                     // update max numeric id part
                     try {
