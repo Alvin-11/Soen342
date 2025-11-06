@@ -1,5 +1,4 @@
 package com.mycompany.app;
-import java.security.InvalidParameterException;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,12 +8,8 @@ import java.util.HashMap;
 
 public class TicketCatalog {
     private HashMap<Integer,Ticket> tickets;
-    private ClientCatalog clients;
-    private TripCatalog trips;
 
     public TicketCatalog(ClientCatalog clients, TripCatalog trips) {
-        this.clients = clients;
-        this.trips = trips;
         this.tickets = new HashMap<Integer, Ticket>();
 
         try (java.sql.Connection conn = DriverManager.getConnection(Constants.DB_PATH)) {
@@ -37,16 +32,14 @@ public class TicketCatalog {
 
                 while (res.next()) {
                     // unpack the table row
-                     int ticketID = res.getInt("ticketID");
-                     Trip trip = trips.getTrip(res.getInt("trip"));
-                     Client client = clients.getClient(res.getString("client"));
+                    int ticketID = res.getInt("ticketID");
+                    Trip trip = trips.getTrip(res.getInt("trip"));
+                    Client client = clients.getClient(res.getString("client"));
                 
                     // create the ticket
                     Ticket ticket = new Ticket(ticketID,client,trip);
                     this.tickets.put(ticketID, ticket);
                     trip.addTicket(ticket);
-                    Ticket.incrementIdCounter();
-                    
                 }
 
                 statement.close();
@@ -65,12 +58,8 @@ public class TicketCatalog {
         return this.tickets.get(ticketID);
     }
 
-    public void addTicket(Ticket ticket) {
+    private void addTicket(Ticket ticket) {
         this.tickets.put(ticket.getTicketID(), ticket);
-    }
-
-    public void deleteTicket(Ticket ticket) {
-        this.tickets.remove(ticket.getTicketID());
     }
 
     public HashMap<Integer,Ticket> getAllTickets() {
@@ -80,7 +69,7 @@ public class TicketCatalog {
     public Ticket reserveTrip(Client client, Trip trip){ // Reserves a ticket for a client for a specific trip
         for(Ticket ticket1: trip.getAllTickets()){ // Verifies that a client does not already have a ticket for the trip
             if(ticket1.getClient().getClientID().equals(client.getClientID())){
-                return null;
+                throw new IllegalArgumentException("ERROR: Client has already booked the ticket.");
             }
         }
 
