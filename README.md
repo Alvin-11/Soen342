@@ -7,9 +7,9 @@
 ## How to Run the Application:
 
 Prerequisites:
-[Need SQLite installed](https://sqlite.org/download.html)
-[Need Maven installed](https://maven.apache.org/install.html)
-[Need Java installed](https://www.oracle.com/java/technologies/downloads/)
+- [Need SQLite installed](https://sqlite.org/download.html)
+- [Need Maven installed](https://maven.apache.org/install.html)
+- [Need Java installed](https://www.oracle.com/java/technologies/downloads/)
 
 Once the Github is cloned, go to the Iteration folder and run these commands in order:
 
