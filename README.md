@@ -4,6 +4,10 @@
 - Kevin Liu        : 40281197
 - Jovan Gavranovic : 40282175
 
+## Video Demo:
+
+https://www.youtube.com/watch?v=IkpuB_sC01w
+
 ## How to Run the Application:
 
 Prerequisites:
